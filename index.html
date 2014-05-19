@@ -83,7 +83,7 @@
         var noDataColor = "WhiteSmoke";
 
         var quantize = d3.scale.quantize()
-            .range([1,0])
+            .domain([1,0])
             .range(rangeColors);
 
         var projection = d3.geo.albersUsa()
@@ -99,6 +99,11 @@
 
 
         var updateCounties;
+
+
+        var updateScale = function() {
+
+        };
 
         // Map the csv with county ids
         var values = {};
@@ -134,6 +139,7 @@
 
             console.log(data);
 
+            // Map the data with json elements
         	mapData(data);
 
             var counties = svg.append("g")
@@ -143,16 +149,16 @@
                 .data(topojson.feature(us, us.objects.counties).features)
             .enter().append("path")
                 .style("fill", function(d) {
-                    var q = quantize(values[value].get(d.id));
-                    if(q) {return q;}
-                    else {return noDataColor;}                    
+                    var v = values[value].get(d.id);
+                    if(v != null) {return quantize(v);}
+                    else {return noDataColor;}                       
                 })
                 .attr("d", path)
                 .append("title")
                 .text(function(d){
                     var title = values["CBSATitle"].get(d.id);
                     var county = values["CountyName"].get(d.id);
-                    if(title != "NA") {
+                    if(title != null) {
                     	return (county + " County, " + title);
                     } else {
                     	return (county + " County");
@@ -166,8 +172,8 @@
                 .transition()
                 .duration(500)
                 .style("fill", function(d) {
-                    var q = quantize(values[value].get(d.id));
-                    if(q) {return q;}
+                    var v = values[value].get(d.id);
+                    if(v != null) {return quantize(v);}
                     else {return noDataColor;}                    
                 });
         }
