@@ -83,7 +83,6 @@
         var noDataColor = "WhiteSmoke";
 
         var quantize = d3.scale.quantize()
-            .domain([1,0])
             .range(rangeColors);
 
         var projection = d3.geo.albersUsa()
@@ -100,9 +99,12 @@
 
         var updateCounties;
 
-
+        // Update the scale with min and max values from the current variable (value)
         var updateScale = function() {
-
+            quantize.domain([
+                d3.min(d3.values(values[value])),
+                d3.max(d3.values(values[value]))
+                ]);
         };
 
         // Map the csv with county ids
@@ -141,6 +143,7 @@
 
             // Map the data with json elements
         	mapData(data);
+            updateScale();
 
             var counties = svg.append("g")
                     .attr("class", "counties");
@@ -182,6 +185,7 @@
         d3.select("#valueselect")
             .on("change", function() {
                 value = d3.select("#valueselect").node().value;
+                updateScale();
                 updateCounties();
             })
 
