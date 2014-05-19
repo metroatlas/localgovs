@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>A map of Metropolitan Fragmentation</title>
+        <style type="text/css">
+
+        	.counties {
+                fill: none;
+            }
+
+            .states {
+                fill: none;
+                stroke: #fff;
+                stroke-linejoin: round;
+            }
+
+            .q0-9 { fill:rgb(247,251,255); }
+            .q1-9 { fill:rgb(222,235,247); }
+            .q2-9 { fill:rgb(198,219,239); }
+            .q3-9 { fill:rgb(158,202,225); }
+            .q4-9 { fill:rgb(107,174,214); }
+            .q5-9 { fill:rgb(66,146,198); }
+            .q6-9 { fill:rgb(33,113,181); }
+            .q7-9 { fill:rgb(8,81,156); }
+            .q8-9 { fill:rgb(8,48,107); }
+            .nodata { fill:WhiteSmoke;}
+
+        </style>
+
+        <script src="http://d3js.org/d3.v3.min.js"></script>
+        <script src="http://d3js.org/queue.v1.min.js"></script>
+        <script src="http://d3js.org/topojson.v1.min.js"></script>
+
+    </head>
+    <body>
+
+        <select id = "valueselect">
+        	<option value="CBSAhhi"		>H Index Places and Counties (Dilution of power)</option>
+        	<option value="CBSAhhico"	>H Index Counties (Dilution of power)</option>
+        	<option value="CBSAhhipl"	>H Index Places (Dilution of power)</option>
+        </select>
+        </br>
+
+        <script type="text/javascript">
+            
+        var width = 960,
+            height = 600;
+
+        var value = "CBSAhhi";
+
+        // Scale
+
+        var rangeColors = [
+        	"rgb(247,251,255)",
+        	"rgb(222,235,247)",
+        	"rgb(198,219,239)",
+        	"rgb(158,202,225)",
+        	"rgb(107,174,214)",
+        	"rgb(66,146,198)",
+        	"rgb(33,113,181)",
+        	"rgb(8,81,156)",
+        	"rgb(8,48,107)"
+        	]
+
+        var noDataColor = "WhiteSmoke";
+
+        var quantize = d3.scale.quantize()
+            .domain([1,0])
+            .range(rangeColors);
+
+        var projection = d3.geo.albersUsa()
+            .scale(1280)
+            .translate([width / 2, height / 2])
+
+        var path = d3.geo.path()
+            .projection(projection);
+
+        var svg = d3.select("body").append("svg")
+            .attr("width", width)
+            .attr("height", height);
+
+
+        var updateCounties;
+
+        // Map the csv with county ids
+        var values = {};
+        var mapData = function(data) {
+        	var keys = Object.keys(data[0]);
+        	console.log(keys);
+        	// Initialize maps
+        	for (var i = 0; i < keys.length; i ++) {
+        		values[keys[i]] = d3.map();
+        	}
+
+        	// Map for each county
+        	for (var i = 0; i < data.length; i ++) {
+        		var d = data[i];
+        		for (var j = 0; j < keys.length; j ++) {
+        			values[keys[j]].set(d.id, d[keys[j]]);
+        		}
+        	}
+        	console.log("Data mapped")
+        }
+
+        queue()
+            .defer(d3.json, "us.json")
+            .defer(d3.csv, "A_CBSA_ByCounty_2010.csv")
+            .await(ready);
+
+        function ready(error, us, data) {
+
+        	mapData(data);
+
+            var counties = svg.append("g")
+                    .attr("class", "counties");
+
+            counties.selectAll("path")
+                .data(topojson.feature(us, us.objects.counties).features)
+            .enter().append("path")
+                .style("fill", function(d) {
+                    var q = quantize(values[value].get(d.id));
+                    if(q) {return q;}
+                    else {return noDataColor;}                    
+                })
+                .attr("d", path)
+                .append("title")
+                .text(function(d){
+                    var title = values["CBSATitle"].get(d.id);
+                    var county = values["CountyName"].get(d.id);
+                    if(title != "NA") {
+                    	return (county + " County, " + title);
+                    } else {
+                    	return (county + " County");
+                    }
+                })
+                ;
+
+            updateCounties = function() {
+            counties.selectAll("path")
+                .data(topojson.feature(us, us.objects.counties).features)
+                .transition()
+                .duration(500)
+                .style("fill", function(d) {
+                    var q = quantize(values[value].get(d.id));
+                    if(q) {return q;}
+                    else {return noDataColor;}                    
+                });
+        }
+        }
+
+        d3.select("#valueselect")
+            .on("change", function() {
+                value = d3.select("#valueselect").node().value;
+                updateCounties();
+            })
+
+        d3.select(self.frameElement).style("height", height + "px");
+
+        </script>
+    </body>
+</html>
