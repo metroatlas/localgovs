@@ -5,6 +5,30 @@
         <title>United States Metropolitan Areas</title>
         <style type="text/css">
 
+            div.center {
+                display: block;
+                margin-left: auto;
+                margin-right: auto;
+                width: 960px;
+            }
+
+            #valueselect {
+                margin-left: auto;
+                margin-right: auto;
+            }
+
+            h1, p {
+                text-align:left;
+                line-height:100%;
+                font-family:"Helvetica Neue", Helvetica, sans-serif;
+                font-weight: 300;
+            }
+
+            h1 {
+                line-height:40%;
+            }
+
+
         	.counties {
                 fill: none;
             }
@@ -15,6 +39,8 @@
                 stroke-linejoin: round;
             }
 
+
+
         </style>
 
         <script src="http://d3js.org/d3.v3.min.js"></script>
@@ -23,14 +49,16 @@
 
     </head>
     <body>
-
+    <div id = "map" class ="center">
+        <h1>Metropolitan local governments</h1>
+        <p>Explore America's local governments in their metropolitan environment</p>
         <select id = "valueselect">
         	<option value="CBSAhhi"		>H Index Places and Counties (Dilution of power)</option>
         	<option value="CBSAhhico"	>H Index Counties (Dilution of power)</option>
         	<option value="CBSAhhipl"	>H Index Places (Dilution of power)</option>
         </select>
         </br>
-
+    </div>
         <script type="text/javascript">
             
         var width = 960,
@@ -65,7 +93,7 @@
         var path = d3.geo.path()
             .projection(projection);
 
-        var svg = d3.select("body").append("svg")
+        var svg = d3.select("#map").append("svg")
             .attr("width", width)
             .attr("height", height);
 
