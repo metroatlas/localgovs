@@ -2,8 +2,32 @@
 <html lang="en">
     <head>
         <meta charset="utf-8">
-        <title>A map of Metropolitan Fragmentation</title>
+        <title>United States Metropolitan Areas</title>
         <style type="text/css">
+
+            div.center {
+                display: block;
+                margin-left: auto;
+                margin-right: auto;
+                width: 960px;
+            }
+
+            #valueselect {
+                margin-left: auto;
+                margin-right: auto;
+            }
+
+            h1, p {
+                text-align:left;
+                line-height:100%;
+                font-family:"Helvetica Neue", Helvetica, sans-serif;
+                font-weight: 300;
+            }
+
+            h1 {
+                line-height:40%;
+            }
+
 
         	.counties {
                 fill: none;
@@ -15,16 +39,7 @@
                 stroke-linejoin: round;
             }
 
-            .q0-9 { fill:rgb(247,251,255); }
-            .q1-9 { fill:rgb(222,235,247); }
-            .q2-9 { fill:rgb(198,219,239); }
-            .q3-9 { fill:rgb(158,202,225); }
-            .q4-9 { fill:rgb(107,174,214); }
-            .q5-9 { fill:rgb(66,146,198); }
-            .q6-9 { fill:rgb(33,113,181); }
-            .q7-9 { fill:rgb(8,81,156); }
-            .q8-9 { fill:rgb(8,48,107); }
-            .nodata { fill:WhiteSmoke;}
+
 
         </style>
 
@@ -34,14 +49,16 @@
 
     </head>
     <body>
-
+    <div id = "map" class ="center">
+        <h1>Metropolitan local governments</h1>
+        <p>Explore America's local governments in their metropolitan environment</p>
         <select id = "valueselect">
         	<option value="CBSAhhi"		>H Index Places and Counties (Dilution of power)</option>
         	<option value="CBSAhhico"	>H Index Counties (Dilution of power)</option>
         	<option value="CBSAhhipl"	>H Index Places (Dilution of power)</option>
         </select>
         </br>
-
+    </div>
         <script type="text/javascript">
             
         var width = 960,
@@ -66,7 +83,6 @@
         var noDataColor = "WhiteSmoke";
 
         var quantize = d3.scale.quantize()
-            .domain([1,0])
             .range(rangeColors);
 
         var projection = d3.geo.albersUsa()
@@ -76,12 +92,20 @@
         var path = d3.geo.path()
             .projection(projection);
 
-        var svg = d3.select("body").append("svg")
+        var svg = d3.select("#map").append("svg")
             .attr("width", width)
             .attr("height", height);
 
 
         var updateCounties;
+
+        // Update the scale with min and max values from the current variable (value)
+        var updateScale = function() {
+            quantize.domain([
+                d3.min(d3.values(values[value])),
+                d3.max(d3.values(values[value]))
+                ]);
+        };
 
         // Map the csv with county ids
         var values = {};
@@ -97,7 +121,12 @@
         	for (var i = 0; i < data.length; i ++) {
         		var d = data[i];
         		for (var j = 0; j < keys.length; j ++) {
-        			values[keys[j]].set(d.id, d[keys[j]]);
+        			var v = d[keys[j]];
+                    // Transform NA strings into null values
+                    if(v == "NA") {
+                        v = null;
+                    }
+                    values[keys[j]].set(d.id, v);
         		}
         	}
         	console.log("Data mapped")
@@ -110,7 +139,11 @@
 
         function ready(error, us, data) {
 
+            console.log(data);
+
+            // Map the data with json elements
         	mapData(data);
+            updateScale();
 
             var counties = svg.append("g")
                     .attr("class", "counties");
@@ -119,16 +152,16 @@
                 .data(topojson.feature(us, us.objects.counties).features)
             .enter().append("path")
                 .style("fill", function(d) {
-                    var q = quantize(values[value].get(d.id));
-                    if(q) {return q;}
-                    else {return noDataColor;}                    
+                    var v = values[value].get(d.id);
+                    if(v != null) {return quantize(v);}
+                    else {return noDataColor;}                       
                 })
                 .attr("d", path)
                 .append("title")
                 .text(function(d){
                     var title = values["CBSATitle"].get(d.id);
                     var county = values["CountyName"].get(d.id);
-                    if(title != "NA") {
+                    if(title != null) {
                     	return (county + " County, " + title);
                     } else {
                     	return (county + " County");
@@ -142,8 +175,8 @@
                 .transition()
                 .duration(500)
                 .style("fill", function(d) {
-                    var q = quantize(values[value].get(d.id));
-                    if(q) {return q;}
+                    var v = values[value].get(d.id);
+                    if(v != null) {return quantize(v);}
                     else {return noDataColor;}                    
                 });
         }
@@ -152,6 +185,7 @@
         d3.select("#valueselect")
             .on("change", function() {
                 value = d3.select("#valueselect").node().value;
+                updateScale();
                 updateCounties();
             })
 
