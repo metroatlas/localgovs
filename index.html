@@ -83,7 +83,7 @@
         var noDataColor = "WhiteSmoke";
 
         var quantize = d3.scale.quantize()
-            .domain([1,0])
+            .range([1,0])
             .range(rangeColors);
 
         var projection = d3.geo.albersUsa()
@@ -114,7 +114,12 @@
         	for (var i = 0; i < data.length; i ++) {
         		var d = data[i];
         		for (var j = 0; j < keys.length; j ++) {
-        			values[keys[j]].set(d.id, d[keys[j]]);
+        			var v = d[keys[j]];
+                    // Transform NA strings into null values
+                    if(v == "NA") {
+                        v = null;
+                    }
+                    values[keys[j]].set(d.id, v);
         		}
         	}
         	console.log("Data mapped")
@@ -126,6 +131,8 @@
             .await(ready);
 
         function ready(error, us, data) {
+
+            console.log(data);
 
         	mapData(data);
 
