@@ -102,12 +102,10 @@
 
         var updateScale= function() {
             if(scaletype == "quantile") {
-                console.log("Quantile scale");
                 scale = d3.scale.quantile()
                         .range(rangeColors)
                         .domain(values[value].values());
             } else if(scaletype == "quantize") {
-                console.log("Quantize scale");
                 scale = d3.scale.quantize()
                         .range(rangeColors)
                         .domain([
