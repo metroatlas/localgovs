@@ -83,8 +83,14 @@
 
         var noDataColor = "WhiteSmoke";
 
-        var quantize = d3.scale.quantize()
+
+        // Scale
+        var quantile = d3.scale.quantile()
             .range(rangeColors);
+
+        var updateScale= function() {
+            quantile.domain(values[value].values())
+        }
 
         var projection = d3.geo.albersUsa()
             .scale(1280)
@@ -98,14 +104,6 @@
             .attr("height", height);
 
         var updateCounties;
-
-        // Update the scale with min and max values from the current variable (value)
-        var updateScale = function() {
-            quantize.domain([
-                d3.min(d3.values(values[value])),
-                d3.max(d3.values(values[value]))
-                ]);
-        };
 
         // Map the csv with county ids
         var values = {};
@@ -153,7 +151,7 @@
             .enter().append("path")
                 .style("fill", function(d) {
                     var v = values[value].get(d.id);
-                    if(v != null) {return quantize(v);}
+                    if(v != null) {return quantile(v);}
                     else {return noDataColor;}                       
                 })
                 .attr("d", path)
@@ -171,13 +169,14 @@
 
 
             updateCounties = function() {
+            updateScale();
             counties.selectAll("path")
                 .data(topojson.feature(us, us.objects.counties).features)
                 .transition()
                 .duration(500)
                 .style("fill", function(d) {
                     var v = values[value].get(d.id);
-                    if(v != null) {return quantize(v);}
+                    if(v != null) {return quantile(v);}
                     else {return noDataColor;}                 
                 });
         }
