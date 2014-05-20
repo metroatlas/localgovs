@@ -34,7 +34,6 @@
 
             .states {
                 fill: none;
-                stroke: #fff;
                 stroke-linejoin: round;
             }
 
@@ -64,6 +63,11 @@
             <option value="quantize"      >Quantize scale (even divison of scale domain)</option>
         </select>
 
+        <select id = "showstates">
+            <option value="yes"                    >Show states</option>
+            <option value="no" selected="selected" >Don't show states</option>
+        </select>
+
 
         </br>
     </div>
@@ -90,6 +94,7 @@
 
         var noDataColor = "WhiteSmoke";
 
+        var showstates = "no";
 
         // Scale
         var scaletype = "quantile";
@@ -124,6 +129,7 @@
             .attr("height", height);
 
         var updateCounties;
+        var updateStates;
 
         // Map the csv with county ids
         var values = {};
@@ -187,6 +193,15 @@
                 })
                 ;
 
+            // Draw states borders
+            var states = svg.append("path")
+                            .datum(topojson.mesh(us, us.objects.states, function(a, b) { return a !== b; }))
+                            .attr("class", "states")
+                            .attr("id", "states")
+                            .attr("d", path)
+                            .style("stroke", "#fff")
+                            .style("stroke-width", "0");
+
 
             updateCounties = function() {
             updateScale();
@@ -200,7 +215,18 @@
                     if(v != null) {return scale(v);}
                     else {return noDataColor;}                 
                 });
-        }
+            }
+
+            updateStates = function() {
+                console.log("Update States")
+                var w = 0;
+                if(showstates == "yes") {w = 2;}
+                console.log(w)
+                svg.select("#states")
+                    .transition()
+                    .duration(500)
+                    .style("stroke-width", w);
+            }
         }
 
         d3.select("#valueselect")
@@ -213,6 +239,12 @@
             .on("change", function() {
                 scaletype = d3.select("#scaletype").node().value;
                 updateCounties();
+            })
+
+        d3.select("#showstates")
+            .on("change", function() {
+                showstates = d3.select("#showstates").node().value;
+                updateStates();
             })
 
         d3.select(self.frameElement).style("height", height + "px");
