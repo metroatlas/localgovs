@@ -77,6 +77,10 @@
         var width = 960,
             height = 600;
 
+        // Size of the legend squares
+        var lsize = 20;
+        var lpush = 530;
+
         var value = "CBSAhhi";
 
         // Scale
@@ -119,6 +123,32 @@
 
         var updateCounties;
         var updateStates;
+        
+        var makeLegend = function() {
+            var r = scale.range();
+            console.log(r);
+            var v = [];
+            
+            v.push(parseFloat(d3.min(scale.domain())));
+            v = v.concat(scale.quantiles());
+            v.push(parseFloat(d3.max(scale.domain())));
+            console.log(v);
+            
+            var legend = svg.selectAll(".legend")
+                .append("g")
+                .attr("id", "legend")
+                .data(r)
+                .enter().append("rect")
+                .attr("x", width - lsize - 50)
+                .attr("y", function(d,i){
+                    return height - 100 - i * (lsize + 1);
+                })
+                .attr("width",lsize / 2)
+                .attr("height",lsize)
+                .attr("fill", function(d){
+                    return d;
+                });
+        }
 
         // Map the csv with county ids
         var values = {};
@@ -191,6 +221,10 @@
                             .style("stroke", "#fff")
                             .style("stroke-width", "0");
 
+            
+
+            ////////////////////
+            // UPDATE METHODS //
 
             updateCounties = function() {
             updateScale();
@@ -215,6 +249,7 @@
                     .duration(500)
                     .style("stroke-width", w);
             }
+            
         }
 
         d3.select("#valueselect")
@@ -234,6 +269,8 @@
                 showstates = d3.select("#showstates").node().value;
                 updateStates();
             })
+
+
 
         d3.select(self.frameElement).style("height", height + "px");
 
