@@ -58,6 +58,13 @@
             <option value="CBSAplby10000" >Number of municipalities per 10'000 inhabitants</option>
             <option value="CBSApcprop"    >Proportion of population in principal cities</option>
         </select>
+
+        <select id = "scaletype">
+            <option value="quantile"      >Quantile scale (equal number of cases)</option>
+            <option value="quantize"      >Quantize scale (even divison of scale domain)</option>
+        </select>
+
+
         </br>
     </div>
         <script type="text/javascript">
@@ -85,11 +92,24 @@
 
 
         // Scale
-        var quantile = d3.scale.quantile()
-            .range(rangeColors);
+        var scaletype = "quantile";
+        var scale;
 
         var updateScale= function() {
-            quantile.domain(values[value].values())
+            if(scaletype == "quantile") {
+                console.log("Quantile scale");
+                scale = d3.scale.quantile()
+                        .range(rangeColors)
+                        .domain(values[value].values());
+            } else if(scaletype == "quantize") {
+                console.log("Quantize scale");
+                scale = d3.scale.quantize()
+                        .range(rangeColors)
+                        .domain([
+                            d3.min(d3.values(values[value])),
+                            d3.max(d3.values(values[value]))
+                        ]);
+            }
         }
 
         var projection = d3.geo.albersUsa()
@@ -151,7 +171,7 @@
             .enter().append("path")
                 .style("fill", function(d) {
                     var v = values[value].get(d.id);
-                    if(v != null) {return quantile(v);}
+                    if(v != null) {return scale(v);}
                     else {return noDataColor;}                       
                 })
                 .attr("d", path)
@@ -170,13 +190,14 @@
 
             updateCounties = function() {
             updateScale();
+            console.log("Redrawing counties")
             counties.selectAll("path")
                 .data(topojson.feature(us, us.objects.counties).features)
                 .transition()
                 .duration(500)
                 .style("fill", function(d) {
                     var v = values[value].get(d.id);
-                    if(v != null) {return quantile(v);}
+                    if(v != null) {return scale(v);}
                     else {return noDataColor;}                 
                 });
         }
@@ -185,7 +206,12 @@
         d3.select("#valueselect")
             .on("change", function() {
                 value = d3.select("#valueselect").node().value;
-                updateScale();
+                updateCounties();
+            })
+
+        d3.select("#scaletype")
+            .on("change", function() {
+                scaletype = d3.select("#scaletype").node().value;
                 updateCounties();
             })
 
