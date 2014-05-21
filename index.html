@@ -264,7 +264,7 @@
             .enter().append("path")
                 .style("fill", function(d) {
                     var v = values[value].get(d.id);
-                    if(v != null) {return scale(v);}
+                    if(!isNaN(v)) {return scale(v);}
                     else {return noDataColor;}                       
                 })
                 .attr("d", path)
@@ -304,7 +304,7 @@
                 .duration(500)
                 .style("fill", function(d) {
                     var v = values[value].get(d.id);
-                    if(v != null) {return scale(v);}
+                    if(!isNaN(v)) {return scale(v);}
                     else {return noDataColor;}                 
                 });
             }
