@@ -209,11 +209,19 @@
         var values = {};
         var mapData = function(data) {
         	var keys = Object.keys(data[0]);
-        	//console.log(keys);
+
         	// Initialize maps
         	for (var i = 0; i < keys.length; i ++) {
         		values[keys[i]] = d3.map();
         	}
+
+            // Get the keys to convert to float
+            // Keys listed in the selector
+            var x = document.getElementById("valueselect");
+            var ktf = [];
+            for (var i = 0; i < x.length; i++) {
+                ktf.push(x.options[i].value);
+            };
 
         	// Map for each county
         	for (var i = 0; i < data.length; i ++) {
@@ -224,7 +232,11 @@
                     if(v == "NA") {
                         v = null;
                     }
-                    values[keys[j]].set(d.id, v);
+                    if(ktf.indexOf(keys[j]) >= 0) {
+                        values[keys[j]].set(d.id, parseFloat(v));
+                    } else {
+                        values[keys[j]].set(d.id, v);
+                    }
         		}
         	}
         	console.log("Data mapped")
