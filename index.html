@@ -77,6 +77,10 @@
         var width = 960,
             height = 600;
 
+        // Size of the legend squares
+        var lsize = 20;
+        var lpush = 530;
+
         var value = "CBSAhhi";
 
         // Scale
@@ -119,6 +123,87 @@
 
         var updateCounties;
         var updateStates;
+        
+
+        var legend;
+        var leglabels;
+        var makeLegend = function() {
+            
+        	// Get the range (colors)
+            var r = scale.range();
+                        
+            // Get the domain (boundaries)
+            var v = [];
+            if(scaletype == "quantile"){
+            	v.push(parseFloat(d3.min(scale.domain())));
+            	v = v.concat(scale.quantiles());
+            	v.push(parseFloat(d3.max(scale.domain())));
+            } else {
+            	v.push(parseFloat(scale.domain()[0]));
+            	for(var i = 0; i < r.length; i++) {
+            		var k = (scale.domain()[1] - scale.domain()[0]) * (i+1) + scale.domain()[0];
+            		v.push(k);
+            	}
+            	
+            };
+            
+            
+            // Draw the range (color blocks)
+            var legend = svg.append("g")
+            	.attr("id", "legend")
+            	.selectAll(".legend")
+                .data(r)
+                .enter().append("rect")
+                .attr("x", width - lsize - 50)
+                .attr("y", function(d,i){
+                    return height - 100 - i * (lsize + 1);
+                })
+                .attr("width",lsize / 2)
+                .attr("height",lsize)
+                .attr("fill", function(d){
+                    return d;
+                });
+
+            // Draw the domain text (boundaries)
+            leglabels = svg.select("#legend")
+            				.selectAll(".leglabel")
+            				.data(v)
+            				.enter().append("text")
+                			.attr("x", width - lsize - 30)
+                			.attr("y", function(d,i){
+                    			return height - 77 - i * (lsize + 1);
+                			})
+                			.text(function(d){return d.toFixed(2);})
+                			.attr("font-family", "sans-serif")
+                			.attr("font-size", "10px");
+        }
+
+        var updateLegend = function() {
+            var r = scale.range();
+            var v = [];
+            if(scaletype == "quantile"){
+            	v.push(parseFloat(d3.min(scale.domain())));
+            	v = v.concat(scale.quantiles());
+            	v.push(parseFloat(d3.max(scale.domain())));
+            } else {
+            	v.push(parseFloat(scale.domain()[0]));
+            	for(var i = 0; i < r.length; i++) {
+            		var k = ((scale.domain()[1] - scale.domain()[0]) / r.length) * (i+1) + scale.domain()[0];
+            		v.push(k);
+            	}
+            	
+            };
+
+            //Update data: find a d3esque way of doing it
+            for(var i = 0; i < leglabels[0].length; i++){
+            	leglabels[0][i]["__data__"] = v[i];
+            }
+
+            leglabels.transition()
+            		.duration(500)
+            		.text(function(d){return d.toFixed(2);});
+        };
+
 
         // Map the csv with county ids
         var values = {};
@@ -157,6 +242,7 @@
             // Map the data with json elements
         	mapData(data);
             updateScale();
+            makeLegend();
 
             var counties = svg.append("g")
                     .attr("class", "counties");
@@ -191,9 +277,14 @@
                             .style("stroke", "#fff")
                             .style("stroke-width", "0");
 
+            
+
+            ////////////////////
+            // UPDATE METHODS //
 
             updateCounties = function() {
             updateScale();
+            updateLegend();
             console.log("Redrawing counties")
             counties.selectAll("path")
                 .data(topojson.feature(us, us.objects.counties).features)
@@ -215,6 +306,7 @@
                     .duration(500)
                     .style("stroke-width", w);
             }
+            
         }
 
         d3.select("#valueselect")
@@ -234,6 +326,8 @@
                 showstates = d3.select("#showstates").node().value;
                 updateStates();
             })
+
+
 
         d3.select(self.frameElement).style("height", height + "px");
 
