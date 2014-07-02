@@ -232,7 +232,7 @@
         			var v = d[keys[j]];
                     // Transform NA strings into null values
                     if(v == "NA") {
-                        v = null;
+                        v = NaN;
                     }
                     if(ktf.indexOf(keys[j]) >= 0) {
                         values[keys[j]].set(d.id, parseFloat(v));
