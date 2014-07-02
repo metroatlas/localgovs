@@ -53,7 +53,7 @@
         <select id = "dateselect">
         	<option value="1950">1950</option>
         	<option value="1980">1980</option>
-        	<option value="2010">2010</option>
+        	<option value="2010" selected="selected">2010</option>
         </select>
 
         <select id = "valueselect">
@@ -83,6 +83,7 @@
         var lpush = 530;
 
         var value = "CBSAhhi";
+        var date = "2010";
 
         // Scale
 
@@ -100,13 +101,13 @@
             if(scaletype == "quantile") {
                 scale = d3.scale.quantile()
                         .range(rangeColors)
-                        .domain(values[value].values());
+                        .domain(values[value + '_' + date].values());
             } else if(scaletype == "quantize") {
                 scale = d3.scale.quantize()
                         .range(rangeColors)
                         .domain([
-                            d3.min(d3.values(values[value])),
-                            d3.max(d3.values(values[value]))
+                            d3.min(d3.values(values[value + '_' + date])),
+                            d3.max(d3.values(values[value + '_' + date]))
                         ]);
             }
         }
@@ -264,19 +265,19 @@
                 .data(topojson.feature(us, us.objects.counties).features)
             .enter().append("path")
                 .style("fill", function(d) {
-                    var v = values[value].get(d.id);
+                    var v = values[value + '_' + date].get(d.id);
                     if(!isNaN(v)) {return scale(v);}
                     else {return noDataColor;}                       
                 })
                 .attr("d", path)
                 .append("title")
                 .text(function(d){
-                    var title = values["CBSATitle"].get(d.id);
-                    var county = values["CountyName"].get(d.id);
+                    var title = values["CBSAname_" + date].get(d.id);
+                    var county = values["countyname"].get(d.id);
                     if(title != null) {
-                    	return (county + " County, " + title);
+                    	return (county + ", " + title);
                     } else {
-                    	return (county + " County");
+                    	return (county);
                     }
                 })
                 ;
@@ -304,7 +305,7 @@
                 .transition()
                 .duration(500)
                 .style("fill", function(d) {
-                    var v = values[value].get(d.id);
+                    var v = values[value + '_' + date].get(d.id);
                     if(!isNaN(v)) {return scale(v);}
                     else {return noDataColor;}                 
                 });
@@ -332,6 +333,12 @@
         d3.select("#scaletype")
             .on("change", function() {
                 scaletype = d3.select("#scaletype").node().value;
+                updateCounties();
+            })
+
+        d3.select("#dateselect")
+            .on("change", function() {
+                date = d3.select("#dateselect").node().value;
                 updateCounties();
             })
 
