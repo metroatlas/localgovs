@@ -250,7 +250,7 @@
         }
 
         queue()
-            .defer(d3.json, "us.json")
+            .defer(d3.json, "topo/us-euclidean.json")
             .defer(d3.csv, "A_CBSA_ByCounty_2010.csv")
             .await(ready);
 
