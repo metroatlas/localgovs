@@ -99,6 +99,7 @@
         var scale;
 
         var topo;
+        var thedata;
 
         var updateScale= function() {
             if(scaletype == "quantile") {
@@ -261,6 +262,7 @@
             updateScale();
             makeLegend();
 
+            thedata = data;
             topo = us;
 
             var counties = svg.append("g")
