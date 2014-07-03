@@ -98,6 +98,8 @@
         var scaletype = "quantile";
         var scale;
 
+        var topo;
+
         var updateScale= function() {
             if(scaletype == "quantile") {
                 scale = d3.scale.quantile()
@@ -236,9 +238,9 @@
                         v = NaN;
                     }
                     if(ktf.indexOf(keys[j]) >= 0) {
-                        values[keys[j]].set(d.id, parseFloat(v));
+                        values[keys[j]].set(parseInt(d.id), parseFloat(v));
                     } else {
-                        values[keys[j]].set(d.id, v);
+                        values[keys[j]].set(parseInt(d.id), v);
                     }
         		}
         	}
@@ -258,6 +260,8 @@
         	mapData(data);
             updateScale();
             makeLegend();
+
+            topo = us;
 
             var counties = svg.append("g")
                     .attr("class", "counties");
@@ -307,6 +311,7 @@
                 .duration(500)
                 .style("fill", function(d) {
                     var v = values[value + '_' + date].get(d.id);
+                    if(d.id == '06037') {console.log(d.id, v)};
                     if(!isNaN(v)) {return scale(v);}
                     else {return noDataColor;}                 
                 });
