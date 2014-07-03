@@ -44,6 +44,9 @@
         <script src="http://d3js.org/topojson.v1.min.js"></script>
         <script src="http://d3js.org/colorbrewer.v1.min.js"></script>
 
+        <script src="js/atlas.js"></script>
+        <script src="js/mapper.js"></script>
+
     </head>
     <body>
     <div id = "map" class ="center">
@@ -105,13 +108,13 @@
             if(scaletype == "quantile") {
                 scale = d3.scale.quantile()
                         .range(rangeColors)
-                        .domain(values[value + '_' + date].values());
+                        .domain(mapper.get({'variable':value, 'date':date}).values());
             } else if(scaletype == "quantize") {
                 scale = d3.scale.quantize()
                         .range(rangeColors)
                         .domain([
-                            d3.min(d3.values(values[value + '_' + date])),
-                            d3.max(d3.values(values[value + '_' + date]))
+                            d3.min(d3.values(mapper.get({'variable':value, 'date':date}))),
+                            d3.max(d3.values(mapper.get({'variable':value, 'date':date})))
                         ]);
             }
         }
@@ -210,6 +213,8 @@
             		.text(function(d){return d.toFixed(2);});
         };
 
+        // Create the mapper to map data with json
+        var mapper = d3.atlas.mapper();
 
         queue()
             .defer(d3.json, "topo/us-euclidean.json")
@@ -219,14 +224,11 @@
 
         function ready(error, us, data, variables) {
 
-            //console.log(data);
-
             // Map the data with json elements
-        	mapper = d3.atlas.mapper()
-                        .data(data)
-                        .variables(variables);
+        	mapper.data(data)
+                    .variables(variables)
+                    .map();
 
-            mapData(data);
             updateScale();
             makeLegend();
 
@@ -240,15 +242,15 @@
                 .data(topojson.feature(us, us.objects.counties).features)
             .enter().append("path")
                 .style("fill", function(d) {
-                    var v = values[value + '_' + date].get(d.id);
+                    var v = mapper.get({'variable':value, 'date':date}).get(d.id);
                     if(!isNaN(v)) {return scale(v);}
                     else {return noDataColor;}                       
                 })
                 .attr("d", path)
                 .append("title")
                 .text(function(d){
-                    var title = values["CBSAname_" + date].get(d.id);
-                    var county = values["countyname"].get(d.id);
+                    var title = mapper.get({'variable':'CBSAname', 'date':date}).get(d.id);
+                    var county = mapper.get('countyname').get(d.id);
                     if(title != null) {
                     	return (county + ", " + title);
                     } else {
@@ -274,21 +276,20 @@
             updateCounties = function() {
             updateScale();
             updateLegend();
-            console.log("Redrawing counties")
+            //console.log("Redrawing counties")
             counties.selectAll("path")
                 .data(topojson.feature(us, us.objects.counties).features)
                 .transition()
                 .duration(500)
                 .style("fill", function(d) {
-                    var v = values[value + '_' + date].get(d.id);
-                    if(d.id == '06037') {console.log(d.id, v)};
+                    var v = mapper.get({'variable':value, 'date':date}).get(d.id);
                     if(!isNaN(v)) {return scale(v);}
                     else {return noDataColor;}                 
                 });
             }
 
             updateStates = function() {
-                console.log("Update States")
+                //console.log("Update States")
                 var w = 0;
                 if(showstates == "yes") {w = 2;}
                 svg.select("#states")
