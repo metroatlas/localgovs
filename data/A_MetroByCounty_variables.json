@@ -1,0 +1,14 @@
+{
+    "atlasvariables": [
+        {
+            "name": "CBSAhhi",
+            "type": "float",
+            "description": "H Index (Dilution of power)"
+        },
+        {
+            "name": "Deltahhi30y",
+            "type": "float",
+            "description": "30 years changes of H Index"
+        }
+    ]
+}
