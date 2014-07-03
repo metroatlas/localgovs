@@ -2,6 +2,7 @@ d3.atlas.mapper = function module() {
 	// The mapper object contains a series of d3 maps (binding values to keys, keys corresponding to geographic objects)
 
 	var maps = {}, 
+		nullMap = d3.map(),
 		data, 
 		naString = "NA",
 		nullValue = NaN,
@@ -33,11 +34,23 @@ d3.atlas.mapper = function module() {
     	return this;
 	};
 
+	exports.maps = function(_x) {
+    	if (!arguments.length) return maps;
+    	return this;
+	};
+
 	exports.get = function(_x) {
+    	var n;
     	if(typeof(_x) == "string") {
-    		return maps[_x];
+    		n = _x;
     	} else if(typeof(_x) == "object") {
-    		return maps[_x['variable'] + '_' + _x['date']];
+    		n = _x['variable'] + '_' + _x['date'];
+    	}
+
+   	    if(Object.keys(maps).indexOf(n) >= 0) {
+    		return maps[n];
+    	} else {
+    		return nullMap;
     	}
 	};
 
@@ -79,6 +92,12 @@ d3.atlas.mapper = function module() {
                     maps[keys[j]].set(parseInt(d.id), v);
                 }
       		}
+       	}
+
+       	// Create the nullMap, returned when the queried variable is not in the data
+       	var keys = Object.keys(maps[Object.keys(maps)[0]])
+       	for(var i = 0; i < keys.length; i++) {
+       		nullMap.set(keys[i], nullValue);
        	}
        	return this;
 	}
