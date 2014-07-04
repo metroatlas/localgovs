@@ -43,27 +43,18 @@
         <script src="http://d3js.org/queue.v1.min.js"></script>
         <script src="http://d3js.org/topojson.v1.min.js"></script>
         <script src="http://d3js.org/colorbrewer.v1.min.js"></script>
+        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
 
         <script src="js/atlas.js"></script>
         <script src="js/mapper.js"></script>
+        <script src="js/menu.js"></script>
 
     </head>
     <body>
     <div id = "map" class ="center">
         <h1>Metropolitan local governments</h1>
         <p>Explore America's local governments in their metropolitan environment</p>
-        
-        <select id = "dateselect">
-        	<option value="1950">1950</option>
-        	<option value="1980">1980</option>
-        	<option value="2010" selected="selected">2010</option>
-        </select>
-
-        <select id = "valueselect">
-        	<option value="CBSAhhi"		  >H Index (Dilution of power): Counties and Municipalities</option>
-        	<option value="Deltahhi30y"   >30y change in H Index</option>
-        </select>
-
+        <span id = "menu"></span>
         <select id = "scaletype">
             <option value="quantile"      >Quantile scale (equal number of cases)</option>
             <option value="quantize"      >Quantize scale (even divison of scale domain)</option>
@@ -216,6 +207,9 @@
         // Create the mapper to map data with json
         var mapper = d3.atlas.mapper();
 
+        // Create the menu to create the menu from the variable descriptor json and the data file
+        var menu = d3.atlas.menu();
+
         queue()
             .defer(d3.json, "topo/us-euclidean.json")
             .defer(d3.csv, "data/A_MetroByCounty.csv")
@@ -228,6 +222,12 @@
         	mapper.data(data)
                     .variables(variables)
                     .map();
+
+            // Create menu elements based on variable descriptors
+            menu.data(data)
+            		.json(variables)
+            		.spanId('menu')
+            		.menu();
 
             updateScale();
             makeLegend();
