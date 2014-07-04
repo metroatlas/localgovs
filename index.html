@@ -229,6 +229,8 @@
             		.spanId('menu')
             		.menu();
 
+           	listeners();
+
             updateScale();
             makeLegend();
 
@@ -300,30 +302,32 @@
             
         }
 
-        d3.select("#valueselect")
-            .on("change", function() {
-                value = d3.select("#valueselect").node().value;
-                updateCounties();
-            })
+        var listeners = function() {
+	       	d3.select("#valueselect")
+	            .on("change", function() {
+	                value = d3.select("#valueselect").node().value;
+	                updateCounties();
+	            })
 
 
-        d3.select("#scaletype")
-            .on("change", function() {
-                scaletype = d3.select("#scaletype").node().value;
-                updateCounties();
-            })
+	        d3.select("#scaletype")
+	            .on("change", function() {
+	                scaletype = d3.select("#scaletype").node().value;
+	                updateCounties();
+	            })
 
-        d3.select("#dateselect")
-            .on("change", function() {
-                date = d3.select("#dateselect").node().value;
-                updateCounties();
-            })
+	        d3.select("#dateselect")
+	            .on("change", function() {
+	                date = d3.select("#dateselect").node().value;
+	                updateCounties();
+	            })
 
-        d3.select("#showstates")
-            .on("change", function() {
-                showstates = d3.select("#showstates").node().value;
-                updateStates();
-            })
+	        d3.select("#showstates")
+	            .on("change", function() {
+	                showstates = d3.select("#showstates").node().value;
+	                updateStates();
+	            })
+        };
 
 
 
