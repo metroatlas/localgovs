@@ -82,12 +82,12 @@ d3.atlas.mapper = function module() {
                 if(v == naString) {
                    v = nullValue;
                 }
-                if(cast['toFloat'].indexOf(keys[j]) >= 0) {
+                if(cast['toFloat'].indexOf(keys[j].split("_")[0]) >= 0) {
                     maps[keys[j]].set(parseInt(d.id), parseFloat(v));
-                } else if(cast['toInt'].indexOf(keys[j]) >= 0) {
-                	maps[keys[j]].set(parseInt(d.id), parseInt(v));
-                } else if(cast['toStr'].indexOf(keys[j]) >= 0) {
-                	maps[keys[j]].set(parseInt(d.id), String(v));
+                } else if(cast['toInt'].indexOf(keys[j].split("_")[0]) >= 0) {
+                	  maps[keys[j]].set(parseInt(d.id), parseInt(v));
+                } else if(cast['toStr'].indexOf(keys[j].split("_")[0]) >= 0) {
+                	  maps[keys[j]].set(parseInt(d.id), String(v));
                 } else {
                     maps[keys[j]].set(parseInt(d.id), v);
                 }
