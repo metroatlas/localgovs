@@ -1,0 +1,49 @@
+{
+    "atlasvariables": [
+        {
+            "name": "CBSAhhi",
+            "type": "float",
+            "description": "H Index (Dilution of power): Counties and Municipalities"
+        },
+        {
+            "name": "Deltahhi30y",
+            "type": "float",
+            "description": "30 years changes of H Index"
+        },
+        {
+            "name": "CBSAhhico",
+            "type": "float",
+            "description": "H Index (Dilution of power): Counties only"
+        },
+        {
+            "name": "CBSAhhipl",
+            "type": "float",
+            "description": "H Index (Dilution of power): Municipalities only"
+        },
+        {
+            "name": "CBSAplcount",
+            "type": "int",
+            "description": "Number of Municipalities by County"
+        },
+        {
+            "name": "CBSAplby10000",
+            "type": "float",
+            "description": "Number of Municipalities by 10'000 inhabitants"
+        },
+        {
+            "name": "CBSApcpop",
+            "type": "int",
+            "description": "Total population in central cities of the metro area"
+        },
+        {
+            "name": "CBSApcprop",
+            "type": "float",
+            "description": "Proportion of population in central cities of the metro area"
+        },
+        {
+            "name": "CBSAzb",
+            "type": "float",
+            "description": "Ziegler-Brunn Index"
+        }
+        ]
+}

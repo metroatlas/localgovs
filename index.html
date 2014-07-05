@@ -43,22 +43,18 @@
         <script src="http://d3js.org/queue.v1.min.js"></script>
         <script src="http://d3js.org/topojson.v1.min.js"></script>
         <script src="http://d3js.org/colorbrewer.v1.min.js"></script>
+        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+
+        <script src="js/atlas.js"></script>
+        <script src="js/mapper.js"></script>
+        <script src="js/menu.js"></script>
 
     </head>
     <body>
     <div id = "map" class ="center">
         <h1>Metropolitan local governments</h1>
         <p>Explore America's local governments in their metropolitan environment</p>
-        <select id = "valueselect">
-        	<option value="CBSAhhi"		  >H Index (Dilution of power): Counties and Municipalities</option>
-        	<option value="CBSAhhico"	  >H Index (Dilution of power): Counties only</option>
-        	<option value="CBSAhhipl"	  >H Index (Dilution of power): Municipalities only</option>
-            <option value="CBSAmdpi2007"  >Metropolitan Power Diffusion Index (2007)</option>
-            <option value="CBSAzb"        >Ziegler-Brunn Index</option>
-            <option value="CBSAplby10000" >Number of municipalities per 10'000 inhabitants</option>
-            <option value="CBSApcprop"    >Proportion of population in principal cities</option>
-        </select>
-
+        <span id = "menu"></span>
         <select id = "scaletype">
             <option value="quantile"      >Quantile scale (equal number of cases)</option>
             <option value="quantize"      >Quantize scale (even divison of scale domain)</option>
@@ -82,6 +78,7 @@
         var lpush = 530;
 
         var value = "CBSAhhi";
+        var date = "2010";
 
         // Scale
 
@@ -95,17 +92,20 @@
         var scaletype = "quantile";
         var scale;
 
+        var topo;
+        var thedata;
+
         var updateScale= function() {
             if(scaletype == "quantile") {
                 scale = d3.scale.quantile()
                         .range(rangeColors)
-                        .domain(values[value].values());
+                        .domain(mapper.get({'variable':value, 'date':date}).values());
             } else if(scaletype == "quantize") {
                 scale = d3.scale.quantize()
                         .range(rangeColors)
                         .domain([
-                            d3.min(d3.values(values[value])),
-                            d3.max(d3.values(values[value]))
+                            d3.min(d3.values(mapper.get({'variable':value, 'date':date}))),
+                            d3.max(d3.values(mapper.get({'variable':value, 'date':date})))
                         ]);
             }
         }
@@ -204,57 +204,38 @@
             		.text(function(d){return d.toFixed(2);});
         };
 
+        // Create the mapper to map data with json
+        var mapper = d3.atlas.mapper();
 
-        // Map the csv with county ids
-        var values = {};
-        var mapData = function(data) {
-        	var keys = Object.keys(data[0]);
-
-        	// Initialize maps
-        	for (var i = 0; i < keys.length; i ++) {
-        		values[keys[i]] = d3.map();
-        	}
-
-            // Get the keys to convert to float
-            // Keys listed in the selector
-            var x = document.getElementById("valueselect");
-            var ktf = [];
-            for (var i = 0; i < x.length; i++) {
-                ktf.push(x.options[i].value);
-            };
-
-        	// Map for each county
-        	for (var i = 0; i < data.length; i ++) {
-        		var d = data[i];
-        		for (var j = 0; j < keys.length; j ++) {
-        			var v = d[keys[j]];
-                    // Transform NA strings into null values
-                    if(v == "NA") {
-                        v = null;
-                    }
-                    if(ktf.indexOf(keys[j]) >= 0) {
-                        values[keys[j]].set(d.id, parseFloat(v));
-                    } else {
-                        values[keys[j]].set(d.id, v);
-                    }
-        		}
-        	}
-        	console.log("Data mapped")
-        }
+        // Create the menu to create the menu from the variable descriptor json and the data file
+        var menu = d3.atlas.menu();
 
         queue()
-            .defer(d3.json, "us.json")
-            .defer(d3.csv, "A_CBSA_ByCounty_2010.csv")
+            .defer(d3.json, "topo/us-euclidean.json")
+            .defer(d3.csv, "data/A_MetroByCounty.csv")
+            .defer(d3.json, "data/A_MetroByCounty_variables.json")
             .await(ready);
 
-        function ready(error, us, data) {
-
-            //console.log(data);
+        function ready(error, us, data, variables) {
 
             // Map the data with json elements
-        	mapData(data);
+        	mapper.data(data)
+                    .variables(variables)
+                    .map();
+
+            // Create menu elements based on variable descriptors
+            menu.data(data)
+            		.json(variables)
+            		.spanId('menu')
+            		.menu();
+
+           	listeners();
+
             updateScale();
             makeLegend();
+
+            thedata = data;
+            topo = us;
 
             var counties = svg.append("g")
                     .attr("class", "counties");
@@ -263,19 +244,19 @@
                 .data(topojson.feature(us, us.objects.counties).features)
             .enter().append("path")
                 .style("fill", function(d) {
-                    var v = values[value].get(d.id);
+                    var v = mapper.get({'variable':value, 'date':date}).get(d.id);
                     if(!isNaN(v)) {return scale(v);}
                     else {return noDataColor;}                       
                 })
                 .attr("d", path)
                 .append("title")
                 .text(function(d){
-                    var title = values["CBSATitle"].get(d.id);
-                    var county = values["CountyName"].get(d.id);
+                    var title = mapper.get({'variable':'CBSAname', 'date':date}).get(d.id);
+                    var county = mapper.get('countyname').get(d.id);
                     if(title != null) {
-                    	return (county + " County, " + title);
+                    	return (county + ", " + title);
                     } else {
-                    	return (county + " County");
+                    	return (county);
                     }
                 })
                 ;
@@ -297,20 +278,20 @@
             updateCounties = function() {
             updateScale();
             updateLegend();
-            console.log("Redrawing counties")
+            //console.log("Redrawing counties")
             counties.selectAll("path")
                 .data(topojson.feature(us, us.objects.counties).features)
                 .transition()
                 .duration(500)
                 .style("fill", function(d) {
-                    var v = values[value].get(d.id);
+                    var v = mapper.get({'variable':value, 'date':date}).get(d.id);
                     if(!isNaN(v)) {return scale(v);}
                     else {return noDataColor;}                 
                 });
             }
 
             updateStates = function() {
-                console.log("Update States")
+                //console.log("Update States")
                 var w = 0;
                 if(showstates == "yes") {w = 2;}
                 svg.select("#states")
@@ -321,23 +302,32 @@
             
         }
 
-        d3.select("#valueselect")
-            .on("change", function() {
-                value = d3.select("#valueselect").node().value;
-                updateCounties();
-            })
+        var listeners = function() {
+	       	d3.select("#valueselect")
+	            .on("change", function() {
+	                value = d3.select("#valueselect").node().value;
+	                updateCounties();
+	            })
 
-        d3.select("#scaletype")
-            .on("change", function() {
-                scaletype = d3.select("#scaletype").node().value;
-                updateCounties();
-            })
 
-        d3.select("#showstates")
-            .on("change", function() {
-                showstates = d3.select("#showstates").node().value;
-                updateStates();
-            })
+	        d3.select("#scaletype")
+	            .on("change", function() {
+	                scaletype = d3.select("#scaletype").node().value;
+	                updateCounties();
+	            })
+
+	        d3.select("#dateselect")
+	            .on("change", function() {
+	                date = d3.select("#dateselect").node().value;
+	                updateCounties();
+	            })
+
+	        d3.select("#showstates")
+	            .on("change", function() {
+	                showstates = d3.select("#showstates").node().value;
+	                updateStates();
+	            })
+        };
 
 
 
