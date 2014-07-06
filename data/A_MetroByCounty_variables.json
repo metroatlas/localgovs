@@ -23,12 +23,42 @@
         {
             "name": "CBSAplcount",
             "type": "int",
-            "description": "Number of Municipalities by County"
+            "description": "Number of Municipalities by Metro area"
         },
         {
             "name": "CBSAplby10000",
             "type": "float",
-            "description": "Number of Municipalities by 10'000 inhabitants"
+            "description": "Number of Municipalities by 10'000 inhabitants in the Metro area"
+        },
+        {
+            "name": "DeltaCBSAplcount30y",
+            "type": "int",
+            "description": "30 years changes of number of Municipalities by Metro area"
+        },
+        {
+            "name": "DeltaCBSAplby1000030y",
+            "type": "float",
+            "description": "30 years changes of number of Municipalities by 10'000 inhabitants in the Metro area"
+        },
+        {
+            "name": "COplcount",
+            "type": "int",
+            "description": "Number of Municipalities by County"
+        },
+        {
+            "name": "COplby10000",
+            "type": "float",
+            "description": "Number of Municipalities by 10'000 inhabitants in the County"
+        },
+        {
+            "name": "DeltaCOplcount30y",
+            "type": "int",
+            "description": "30 years changes of number of Municipalities by County"
+        },
+        {
+            "name": "DeltaCOplby1000030y",
+            "type": "float",
+            "description": "30 years changes of number of Municipalities by 10'000 inhabitants in the County"
         },
         {
             "name": "CBSApcpop",
