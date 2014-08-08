@@ -1,6 +1,11 @@
 {
     "atlasvariables": [
         {
+            "name": "CBSApart",
+            "type": "int",
+            "description": "Counties part of metro areas"
+        },
+        {
             "name": "CBSAhhi",
             "type": "float",
             "description": "H Index (Dilution of power): Counties and Municipalities"
