@@ -1,6 +1,11 @@
 {
     "atlasvariables": [
         {
+            "name": "countypop",
+            "type": "int",
+            "description": "County population"
+        },
+        {
             "name": "CBSApart",
             "type": "int",
             "description": "Counties part of metro areas"
