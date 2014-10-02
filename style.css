@@ -1,3 +1,5 @@
+/* BLOCKS */
+
 div.center {
     display: block;
     margin-left: auto;
@@ -5,10 +7,30 @@ div.center {
     width: 960px;
 }
 
+div#plot {
+    display: block;
+    float: left;
+    width:470px;
+    padding:5px;
+}
+
+div#infometro {
+    display: block;
+    float: left;
+    width:470px;
+    padding:5px;
+}
+
+
+
+/* MENU */
+
 #valueselect {
     margin-left: auto;
     margin-right: auto;
 }
+
+/* TEXT */
 
 h1, p {
     text-align:left;
@@ -21,6 +43,8 @@ h1 {
     line-height:40%;
 }
 
+/* MAP */
+
 .counties {
     fill: none;
 }
@@ -29,3 +53,4 @@ h1 {
     fill: none;
     stroke-linejoin: round;
 }
+
