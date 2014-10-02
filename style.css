@@ -1,0 +1,31 @@
+div.center {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    width: 960px;
+}
+
+#valueselect {
+    margin-left: auto;
+    margin-right: auto;
+}
+
+h1, p {
+    text-align:left;
+    line-height:100%;
+    font-family:"Helvetica Neue", Helvetica, sans-serif;
+    font-weight: 300;
+}
+
+h1 {
+    line-height:40%;
+}
+
+.counties {
+    fill: none;
+}
+
+.states {
+    fill: none;
+    stroke-linejoin: round;
+}
