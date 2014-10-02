@@ -71,6 +71,9 @@
     </div>
         <script type="text/javascript">
             
+        var counties;
+
+        var id;
         var width = 960,
             height = 600;
 
@@ -86,6 +89,7 @@
         var rangeColors = colorbrewer.Blues[9];
 
         var noDataColor = "WhiteSmoke";
+        var selectColor = "Orange";
 
         var showstates = "no";
 
@@ -238,7 +242,7 @@
             thedata = data;
             topo = us;
 
-            var counties = svg.append("g")
+            counties = svg.append("g")
                     .attr("class", "counties");
 
             counties.selectAll("path")
@@ -250,6 +254,23 @@
                     else {return noDataColor;}                       
                 })
                 .attr("d", path)
+                .attr("id", function(d) {return d.id;})
+
+                // Metro area highlighted on mouseover
+                .on("mouseover", function() {
+                	console.log("Mouse over");
+                	var cbsa = mapper.get({'variable':'CBSAcode', 'date':date}).get(d3.select(this).attr("id"))
+                	if(!isNaN(cbsa)){
+                		var co = [];
+                		mapper.get({'variable':'CBSAcode', 'date':date}).forEach(function(k, v) {
+                			if(v == cbsa){co[co.length] = parseInt(k)};
+                		});
+                		console.log(co);
+                        updateCounties(co);
+                	};
+
+                })
+
                 .append("title")
                 .text(function(d){
                     var title = mapper.get({'variable':'CBSAname', 'date':date}).get(d.id);
@@ -276,7 +297,7 @@
             ////////////////////
             // UPDATE METHODS //
 
-            updateCounties = function() {
+            updateCounties = function(selected) {
             updateScale();
             updateLegend();
             //console.log("Redrawing counties")
@@ -286,8 +307,14 @@
                 .duration(500)
                 .style("fill", function(d) {
                     var v = mapper.get({'variable':value, 'date':date}).get(d.id);
-                    if(!isNaN(v)) {return scale(v);}
-                    else {return noDataColor;}                 
+                    //console.log(d.id);
+                    if(selected != null & selected.indexOf(d.id) !== -1) {
+                        // Color for when a county is selected
+                        return selectColor;
+                    } else {
+                        if(!isNaN(v)) {return scale(v);}
+                        else {return noDataColor;}
+                    };
                 });
             }
 
