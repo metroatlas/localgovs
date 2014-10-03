@@ -245,7 +245,9 @@
                 		console.log(co);
                         updateCounties(co);
                         updateInfoMetro(d3.select(this).attr("id"));
-                	};
+                	} else {
+                        updateInfoMetro(d3.select(this).attr("id"));
+                    };
 
                 })
 
@@ -313,7 +315,18 @@
 
                 d3.select("#infometro")
                     .append("p")
-                    .text(mapper.get({'variable':'CBSAname', 'date':date}).get(id));
+                    .text(mapper.get('countyname').get(id));
+
+                var cbsa = mapper.get({'variable':'CBSAname', 'date':date}).get(id);
+
+                console.log(cbsa);
+                console.log(typeof cbsa);
+
+                if(typeof cbsa == "string") {
+                    d3.select("#infometro")
+                        .append("p")
+                        .text("CBSA: " + cbsa);
+                };
             }
             
         }
