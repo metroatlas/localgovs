@@ -315,7 +315,7 @@
 
                 d3.select("#infometro")
                     .append("p")
-                    .text(mapper.get('countyname').get(id));
+                    .text(mapper.get('countyname').get(id) + ", " + mapper.get('statename').get(id));
 
                 var cbsa = mapper.get({'variable':'CBSAname', 'date':date}).get(id);
 
