@@ -42,6 +42,10 @@ h1 {
     line-height:40%;
 }
 
+p {
+    font-size: 80%;
+}
+
 /* MAP */
 
 .counties {

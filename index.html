@@ -319,14 +319,12 @@
 
                 var cbsa = mapper.get({'variable':'CBSAname', 'date':date}).get(id);
 
-                console.log(cbsa);
-                console.log(typeof cbsa);
-
                 if(typeof cbsa == "string") {
                     d3.select("#infometro")
                         .append("p")
                         .text("CBSA: " + cbsa);
                 };
+
             }
             
         }
