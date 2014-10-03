@@ -41,7 +41,7 @@
     <div id="map" class="center"></div>
     <div class="center">
         <div id="plot">Plot</div>
-        <div id="infometro">Infometro</div>
+        <div id="infometro"></div>
     </div>
 
     <!--Scripts-->
@@ -244,6 +244,7 @@
                 		});
                 		console.log(co);
                         updateCounties(co);
+                        updateInfoMetro(d3.select(this).attr("id"));
                 	};
 
                 })
@@ -303,6 +304,16 @@
                     .transition()
                     .duration(500)
                     .style("stroke-width", w);
+            }
+
+            updateInfoMetro = function(id) {
+                
+                d3.select("#infometro")
+                    .selectAll("*").remove();
+
+                d3.select("#infometro")
+                    .append("p")
+                    .text(mapper.get({'variable':'CBSAname', 'date':date}).get(id));
             }
             
         }
