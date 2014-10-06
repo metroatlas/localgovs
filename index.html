@@ -189,6 +189,10 @@
             		.text(function(d){return d.toFixed(2);});
         };
 
+        var updateVariableTxt = function() {
+            $('#variabletxt').load("res/variabletxt/" + value + ".html");
+        };
+
         // Create the mapper to map data with json
         var mapper = d3.atlas.mapper();
 
@@ -342,6 +346,7 @@
 	            .on("change", function() {
 	                value = d3.select("#valueselect").node().value;
 	                updateCounties();
+                    updateVariableTxt();
 	            })
 
 
