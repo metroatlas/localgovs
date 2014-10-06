@@ -7,7 +7,7 @@ div.center {
     width: 960px;
 }
 
-div#plot {
+div#variablebox {
     display: block;
     float: left;
     width:470px;

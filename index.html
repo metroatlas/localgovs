@@ -5,6 +5,8 @@
         <title>United States Metropolitan Areas</title>
         <link rel="stylesheet" type="text/css" href="style.css">
 
+        <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
         <script src="http://d3js.org/d3.v3.min.js"></script>
         <script src="http://d3js.org/queue.v1.min.js"></script>
         <script src="http://d3js.org/topojson.v1.min.js"></script>
@@ -40,7 +42,10 @@
     </div>
     <div id="map" class="center"></div>
     <div class="center">
-        <div id="plot"></div>
+        <div id="variablebox">
+            <div id="plot"></div>
+            <div id="variabletxt"></div>
+        </div>
         <div id="infometro"></div>
     </div>
 
@@ -184,6 +189,13 @@
             leglabels.transition()
             		.duration(500)
             		.text(function(d){return d.toFixed(2);});
+        };
+
+        var updateVariableTxt = function() {
+            $('#variabletxt').load("res/variabletxt/" + value + ".html", function() {
+                console.log("Processing MathJax");
+                MathJax.Hub.Queue(["Typeset", MathJax.Hub, "variabletxt"]);
+            });
         };
 
         // Create the mapper to map data with json
@@ -339,6 +351,7 @@
 	            .on("change", function() {
 	                value = d3.select("#valueselect").node().value;
 	                updateCounties();
+                    updateVariableTxt();
 	            })
 
 
