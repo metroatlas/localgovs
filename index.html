@@ -5,6 +5,8 @@
         <title>United States Metropolitan Areas</title>
         <link rel="stylesheet" type="text/css" href="style.css">
 
+        <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
         <script src="http://d3js.org/d3.v3.min.js"></script>
         <script src="http://d3js.org/queue.v1.min.js"></script>
         <script src="http://d3js.org/topojson.v1.min.js"></script>
@@ -190,7 +192,10 @@
         };
 
         var updateVariableTxt = function() {
-            $('#variabletxt').load("res/variabletxt/" + value + ".html");
+            $('#variabletxt').load("res/variabletxt/" + value + ".html", function() {
+                console.log("Processing MathJax");
+                MathJax.Hub.Queue(["Typeset", MathJax.Hub, "variabletxt"]);
+            });
         };
 
         // Create the mapper to map data with json
