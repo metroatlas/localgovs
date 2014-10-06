@@ -288,9 +288,14 @@
                 .style("fill", function(d) {
                     var v = mapper.get({'variable':value, 'date':date}).get(d.id);
                     //console.log(d.id);
-                    if(selected != null & selected.indexOf(d.id) !== -1) {
+                    if(selected != null) {
+                        if(selected.indexOf(d.id) !== -1) {
                         // Color for when a county is selected
                         return selectColor;
+                        } else {
+                            if(!isNaN(v)) {return scale(v);}
+                            else {return noDataColor;}
+                        }
                     } else {
                         if(!isNaN(v)) {return scale(v);}
                         else {return noDataColor;}
