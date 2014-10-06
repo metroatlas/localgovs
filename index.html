@@ -191,12 +191,37 @@
             		.text(function(d){return d.toFixed(2);});
         };
 
+
         var updateVariableTxt = function() {
             $('#variabletxt').load("res/variabletxt/" + value + ".html", function() {
                 console.log("Processing MathJax");
                 MathJax.Hub.Queue(["Typeset", MathJax.Hub, "variabletxt"]);
             });
         };
+
+
+        var updateInfoMetro = function(id) {
+                // Populate the infobox for the county and metro area
+
+                // Remove everything in the div
+                d3.select("#infometro")
+                    .selectAll("*").remove();
+
+                // County name
+                d3.select("#infometro")
+                    .append("p")
+                    .append("strong")
+                    .text(mapper.get('countyname').get(id) + ", " + mapper.get('statename').get(id));
+
+                var cbsa = mapper.get({'variable':'CBSAname', 'date':date}).get(id);
+
+                if(typeof cbsa == "string") {
+                    d3.select("#infometro")
+                        .append("p")
+                        .text("CBSA: " + cbsa);
+                };
+
+        }
 
         // Create the mapper to map data with json
         var mapper = d3.atlas.mapper();
@@ -323,25 +348,6 @@
                     .transition()
                     .duration(500)
                     .style("stroke-width", w);
-            }
-
-            updateInfoMetro = function(id) {
-                
-                d3.select("#infometro")
-                    .selectAll("*").remove();
-
-                d3.select("#infometro")
-                    .append("p")
-                    .text(mapper.get('countyname').get(id) + ", " + mapper.get('statename').get(id));
-
-                var cbsa = mapper.get({'variable':'CBSAname', 'date':date}).get(id);
-
-                if(typeof cbsa == "string") {
-                    d3.select("#infometro")
-                        .append("p")
-                        .text("CBSA: " + cbsa);
-                };
-
             }
             
         }
