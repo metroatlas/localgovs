@@ -234,7 +234,7 @@
                 // County population
                 d3.select("#infometro")
                     .append("p")
-                    .text("County population: " + mapper.get({'variable':'countypop', 'date':date}).get(id));
+                    .text("County population: " + numeral(mapper.get({'variable':'countypop', 'date':date}).get(id)).format('0,0'));
 
                 var cbsa = mapper.get({'variable':'CBSAname', 'date':date}).get(id);
 
