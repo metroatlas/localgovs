@@ -216,11 +216,17 @@
         };
 
 
-        var updateVariableTxt = function() {
-            $('#variabletxt').load("res/variabletxt/" + value + ".html", function() {
-                console.log("Processing MathJax");
-                MathJax.Hub.Queue(["Typeset", MathJax.Hub, "variabletxt"]);
-            });
+        var updateVariableTxt = function(variable, variables) {
+            // variable     the name of the variable
+            // variables    a javascript object describing the variables, containing the reference to the description file
+            if(variables[variable].txt != "") {
+                $('#variabletxt').load("res/variabletxt/" + variables[variable].txt + ".html", function() {
+                    MathJax.Hub.Queue(["Typeset", MathJax.Hub, "variabletxt"]);
+                });
+            } else {
+                $('#variabletxt').empty();
+            }
+
         };
 
 
@@ -274,7 +280,7 @@
         function ready(error, us, data, variables) {
 
             // Map the data with json elements
-        	mapper.data(data)
+            mapper.data(data)
                     .variables(variables)
                     .map();
 
@@ -377,7 +383,6 @@
             }
 
             updateStates = function() {
-                //console.log("Update States")
                 var w = 0;
                 if(showstates == "yes") {w = 2;}
                 svg.select("#states")
@@ -393,7 +398,7 @@
 	            .on("change", function() {
 	                value = d3.select("#valueselect").node().value;
 	                updateCounties();
-                    updateVariableTxt();
+                    updateVariableTxt(value, mapper.variables());
 	            })
 
 
