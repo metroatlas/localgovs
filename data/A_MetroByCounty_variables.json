@@ -43,6 +43,12 @@
             "txt": ""
         },
         {
+            "name": "Deltampdi30y",
+            "type": "float",
+            "description": "30 years changes inMetropolitan Power Diffusion Index",
+            "txt": ""
+        },
+        {
             "name": "CBSAplcount",
             "type": "int",
             "description": "Number of Municipalities by Metro area",
