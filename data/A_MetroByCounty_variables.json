@@ -37,6 +37,12 @@
             "txt": "CBSAhhi"
         },
         {
+            "name": "CBSAmdpi",
+            "type": "float",
+            "description": "Metropolitan Power Diffusion Index",
+            "txt": ""
+        },
+        {
             "name": "CBSAplcount",
             "type": "int",
             "description": "Number of Municipalities by Metro area",
