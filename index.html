@@ -5,16 +5,34 @@
         <title>United States Metropolitan Areas</title>
         <link rel="stylesheet" type="text/css" href="style.css">
 
+        <!-- EXTERNAL JAVASCRIPT LIBRARIES -->
+
+        <!-- MathJax to display latex math -->
         <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
 
+        <!-- Numeral.js to format numbers nicely -->
+        <script src="//cdnjs.cloudflare.com/ajax/libs/numeral.js/1.4.5/numeral.min.js"></script>
+
+        <!-- d3js for maps and data visualization -->
         <script src="http://d3js.org/d3.v3.min.js"></script>
         <script src="http://d3js.org/queue.v1.min.js"></script>
         <script src="http://d3js.org/topojson.v1.min.js"></script>
+
+        <!-- ColorBrewer for nice color scales -->
         <script src="http://d3js.org/colorbrewer.v1.min.js"></script>
+
+        <!-- JQuery to manipulate the DOM -->
         <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
 
+        <!-- INTERNAL JAVASCRIPT LIBRARIES -->
+
+        <!-- d3.atlas to serialize maps -->
         <script src="js/atlas.js"></script>
+
+        <!-- d3.mapper to serialize maps of variables -->
         <script src="js/mapper.js"></script>
+
+        <!-- d3.menu to display a menu with these variables -->
         <script src="js/menu.js"></script>
 
     </head>
@@ -66,7 +84,13 @@
         var value = "countypop";
         var date = "2010";
 
-        // Scale
+        // Page structure
+        var divInfoMetro    = "#infometro",
+            divVariableBox  = "#variablebox",
+            divVariableTxt  = "#variabletxt",
+            divPlot         = "#plot";
+
+        // Colors
 
         var rangeColors = colorbrewer.Blues[9];
 
@@ -191,12 +215,45 @@
             		.text(function(d){return d.toFixed(2);});
         };
 
+
         var updateVariableTxt = function() {
             $('#variabletxt').load("res/variabletxt/" + value + ".html", function() {
                 console.log("Processing MathJax");
                 MathJax.Hub.Queue(["Typeset", MathJax.Hub, "variabletxt"]);
             });
         };
+
+
+        var updateInfoMetro = function(coId, mapper, div) {
+                // Populate the infobox for the county and metro area
+                // coId     county id (= FIPS code)
+                // mapper   d3.mapper object
+                // div      div of the metro infobox
+
+                // Remove everything in the div
+                d3.select(div)
+                    .selectAll("*").remove();
+
+                // County name
+                d3.select(div)
+                    .append("p")
+                    .append("strong")
+                    .text(mapper.get('countyname').get(coId) + ", " + mapper.get('statename').get(coId));
+
+                // County population
+                d3.select(div)
+                    .append("p")
+                    .text("County population: " + numeral(mapper.get({'variable':'countypop', 'date':date}).get(coId)).format('0,0'));
+
+                var cbsa = mapper.get({'variable':'CBSAname', 'date':date}).get(coId);
+
+                if(typeof cbsa == "string") {
+                    d3.select(div)
+                        .append("p")
+                        .text("CBSA: " + cbsa);
+                };
+
+        }
 
         // Create the mapper to map data with json
         var mapper = d3.atlas.mapper();
@@ -256,9 +313,9 @@
                 		});
                 		console.log(co);
                         updateCounties(co);
-                        updateInfoMetro(d3.select(this).attr("id"));
+                        updateInfoMetro(d3.select(this).attr("id"), mapper, divInfoMetro);
                 	} else {
-                        updateInfoMetro(d3.select(this).attr("id"));
+                        updateInfoMetro(d3.select(this).attr("id"), mapper, divInfoMetro);
                     };
 
                 })
@@ -323,25 +380,6 @@
                     .transition()
                     .duration(500)
                     .style("stroke-width", w);
-            }
-
-            updateInfoMetro = function(id) {
-                
-                d3.select("#infometro")
-                    .selectAll("*").remove();
-
-                d3.select("#infometro")
-                    .append("p")
-                    .text(mapper.get('countyname').get(id) + ", " + mapper.get('statename').get(id));
-
-                var cbsa = mapper.get({'variable':'CBSAname', 'date':date}).get(id);
-
-                if(typeof cbsa == "string") {
-                    d3.select("#infometro")
-                        .append("p")
-                        .text("CBSA: " + cbsa);
-                };
-
             }
             
         }
