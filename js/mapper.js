@@ -31,8 +31,19 @@ d3.atlas.mapper = function module() {
 	exports.variables = function(_x) {
     	if (!arguments.length) return variables;
     	variables = _x;
+      var vs = new Object();
+      for (var i = variables['atlasvariables'].length - 1; i >= 0; i--) {
+        v = variables['atlasvariables'][i];
+        vs[v['name']] = v;
+      };
+      variables = vs;
     	return this;
 	};
+
+  exports.variable = function(_x) {
+      if (!arguments.length) return variables;
+      return this;
+  };
 
 	exports.maps = function(_x) {
     	if (!arguments.length) return maps;
@@ -66,8 +77,8 @@ d3.atlas.mapper = function module() {
        	var cast = {"toFloat": [], "toInt": [], "toStr": []};
        	var bind = {"float": "toFloat", "int": "toInt", "str": "toStr"};
 
-       	for (i = 0; i < variables['atlasvariables'].length; i++) {
-       		v = variables['atlasvariables'][i];
+       	for (var key in variables) {
+       		v = variables[key];
        		if(Object.keys(bind).indexOf(v['type']) >= 0) {
        			cast[bind[v['type']]].push(v['name']);
        		}
