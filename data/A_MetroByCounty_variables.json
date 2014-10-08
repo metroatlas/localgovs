@@ -3,87 +3,104 @@
         {
             "name": "countypop",
             "type": "int",
-            "description": "County population"
+            "description": "County population",
+            "txt": ""
         },
         {
             "name": "CBSApart",
             "type": "int",
-            "description": "Counties part of metro areas"
+            "description": "Counties part of metro areas",
+            "txt": ""
         },
         {
             "name": "CBSAhhi",
             "type": "float",
-            "description": "H Index (Dilution of power): Counties and Municipalities"
+            "description": "H Index (Dilution of power): Counties and Municipalities",
+            "txt": "CBSAhhi"
         },
         {
             "name": "Deltahhi30y",
             "type": "float",
-            "description": "30 years changes of H Index"
+            "description": "30 years changes of H Index",
+            "txt": "CBSAhhi"
         },
         {
             "name": "CBSAhhico",
             "type": "float",
-            "description": "H Index (Dilution of power): Counties only"
+            "description": "H Index (Dilution of power): Counties only",
+            "txt": "CBSAhhi"
         },
         {
             "name": "CBSAhhipl",
             "type": "float",
-            "description": "H Index (Dilution of power): Municipalities only"
+            "description": "H Index (Dilution of power): Municipalities only",
+            "txt": "CBSAhhi"
         },
         {
             "name": "CBSAplcount",
             "type": "int",
-            "description": "Number of Municipalities by Metro area"
+            "description": "Number of Municipalities by Metro area",
+            "txt": ""
         },
         {
             "name": "CBSAplby10000",
             "type": "float",
-            "description": "Number of Municipalities by 10'000 inhabitants in the Metro area"
+            "description": "Number of Municipalities by 10'000 inhabitants in the Metro area",
+            "txt": ""
         },
         {
             "name": "DeltaCBSAplcount30y",
             "type": "int",
-            "description": "30 years changes of number of Municipalities by Metro area"
+            "description": "30 years changes of number of Municipalities by Metro area",
+            "txt": ""
         },
         {
             "name": "DeltaCBSAplby1000030y",
             "type": "float",
-            "description": "30 years changes of number of Municipalities by 10'000 inhabitants in the Metro area"
+            "description": "30 years changes of number of Municipalities by 10'000 inhabitants in the Metro area",
+            "txt": ""
         },
         {
             "name": "COplcount",
             "type": "int",
-            "description": "Number of Municipalities by County"
+            "description": "Number of Municipalities by County",
+            "txt": ""
         },
         {
             "name": "COplby10000",
             "type": "float",
-            "description": "Number of Municipalities by 10'000 inhabitants in the County"
+            "description": "Number of Municipalities by 10'000 inhabitants in the County",
+            "txt": ""
         },
         {
             "name": "DeltaCOplcount30y",
             "type": "int",
-            "description": "30 years changes of number of Municipalities by County"
+            "description": "30 years changes of number of Municipalities by County",
+            "txt": ""
         },
         {
             "name": "DeltaCOplby1000030y",
             "type": "float",
-            "description": "30 years changes of number of Municipalities by 10'000 inhabitants in the County"
+            "description": "30 years changes of number of Municipalities by 10'000 inhabitants in the County",
+            "txt": ""
         },
         {
             "name": "CBSApcpop",
             "type": "int",
-            "description": "Total population in central cities of the metro area"
+            "description": "Total population in central cities of the metro area",
+            "txt": ""
         },
         {
             "name": "CBSApcprop",
             "type": "float",
-            "description": "Proportion of population in central cities of the metro area"
+            "description": "Proportion of population in central cities of the metro area",
+            "txt": ""
         },
         {
             "name": "CBSAzb",
             "type": "float",
-            "description": "Ziegler-Brunn Index"
+            "description": "Ziegler-Brunn Index",
+            "txt": ""
         }
-        ]
+    ]
 }
