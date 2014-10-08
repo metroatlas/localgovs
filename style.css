@@ -31,7 +31,7 @@ div#infometro {
 
 /* TEXT */
 
-h1, p {
+h1, p, ul {
     text-align:left;
     line-height:100%;
     font-family:"Helvetica Neue", Helvetica, sans-serif;
@@ -42,7 +42,7 @@ h1 {
     line-height:40%;
 }
 
-p {
+p, ul {
     font-size: 80%;
 }
 
