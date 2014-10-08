@@ -40,13 +40,13 @@
             "name": "CBSAmpdi",
             "type": "float",
             "description": "Metropolitan Power Diffusion Index",
-            "txt": ""
+            "txt": "CBSAmpdi"
         },
         {
             "name": "Deltampdi30y",
             "type": "float",
-            "description": "30 years changes inMetropolitan Power Diffusion Index",
-            "txt": ""
+            "description": "30 years changes in Metropolitan Power Diffusion Index",
+            "txt": "CBSAmpdi"
         },
         {
             "name": "CBSAplcount",
