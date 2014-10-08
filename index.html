@@ -251,8 +251,12 @@
                     d3.select(div)
                         .append("p")
                         .text("CBSA: " + cbsa);
-                };
 
+                    d3.select(div)
+                        .append("p")
+                        .text("CBSA Population: " + numeral(parseInt(mapper.get({'variable':'CBSApop', 'date':date}).get(coId))).format('0,0'));
+                };
+            
         }
 
         // Create the mapper to map data with json
