@@ -84,7 +84,13 @@
         var value = "countypop";
         var date = "2010";
 
-        // Scale
+        // Page structure
+        var divInfoMetro    = "#infometro",
+            divVariableBox  = "#variablebox",
+            divVariableTxt  = "#variabletxt",
+            divPlot         = "#plot";
+
+        // Colors
 
         var rangeColors = colorbrewer.Blues[9];
 
@@ -218,28 +224,31 @@
         };
 
 
-        var updateInfoMetro = function(id) {
+        var updateInfoMetro = function(coId, mapper, div) {
                 // Populate the infobox for the county and metro area
+                // coId     county id (= FIPS code)
+                // mapper   d3.mapper object
+                // div      div of the metro infobox
 
                 // Remove everything in the div
-                d3.select("#infometro")
+                d3.select(div)
                     .selectAll("*").remove();
 
                 // County name
-                d3.select("#infometro")
+                d3.select(div)
                     .append("p")
                     .append("strong")
-                    .text(mapper.get('countyname').get(id) + ", " + mapper.get('statename').get(id));
+                    .text(mapper.get('countyname').get(coId) + ", " + mapper.get('statename').get(coId));
 
                 // County population
-                d3.select("#infometro")
+                d3.select(div)
                     .append("p")
-                    .text("County population: " + numeral(mapper.get({'variable':'countypop', 'date':date}).get(id)).format('0,0'));
+                    .text("County population: " + numeral(mapper.get({'variable':'countypop', 'date':date}).get(coId)).format('0,0'));
 
-                var cbsa = mapper.get({'variable':'CBSAname', 'date':date}).get(id);
+                var cbsa = mapper.get({'variable':'CBSAname', 'date':date}).get(coId);
 
                 if(typeof cbsa == "string") {
-                    d3.select("#infometro")
+                    d3.select(div)
                         .append("p")
                         .text("CBSA: " + cbsa);
                 };
@@ -304,9 +313,9 @@
                 		});
                 		console.log(co);
                         updateCounties(co);
-                        updateInfoMetro(d3.select(this).attr("id"));
+                        updateInfoMetro(d3.select(this).attr("id"), mapper, divInfoMetro);
                 	} else {
-                        updateInfoMetro(d3.select(this).attr("id"));
+                        updateInfoMetro(d3.select(this).attr("id"), mapper, divInfoMetro);
                     };
 
                 })
