@@ -136,7 +136,7 @@
             .attr("height", height);
 
         // SVG plot
-        var plotHeight = 500;
+        var plotHeight = 300;
         var plotWidth = 470;
 
         var plotPadding = 30;
@@ -175,8 +175,8 @@
             .range([plotPadding, plotWidth - plotPadding]);
 
             plotYScale.domain([
-                d3.min(d3.values(mapper.get({'variable':value, 'date':date}))),
-                d3.max(d3.values(mapper.get({'variable':value, 'date':date})))
+                d3.max(d3.values(mapper.get({'variable':value, 'date':date}))),
+                d3.min(d3.values(mapper.get({'variable':value, 'date':date})))
             ])
             .range([plotPadding, plotHeight - plotPadding]);
         };
