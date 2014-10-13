@@ -149,7 +149,7 @@
 
         var plotXVariable = "CBSApop";
 
-        var plotSvg = d3.select("plot")
+        var plotSvg = d3.select("#plot")
                     .append("svg")
                     .attr("width", plotWidth)
                     .attr("height", plotHeight);
@@ -168,7 +168,43 @@
                 d3.max(d3.values(mapper.get({'variable':value, 'date':date})))
             ])
             .range([plotPadding, plotHeight - plotPadding]);
-        }
+        };
+
+        var plotAxes = function() {
+            plotXAxis.scale(plotXScale)
+                .orient("bottom")
+                .ticks(5, d3.format(",.0f"));
+
+            plotSvg.append("g")
+                .attr("class", "axis")
+                .attr("id", "plotXAxis")
+                .attr("transform", "translate(0," + (plotHeight - plotPadding) + ")")
+                .call(plotXAxis);
+
+            
+            plotYAxis.scale(plotYScale)
+                .orient("left");
+
+            plotSvg.append("g")
+                .attr("class", "axis")
+                .attr("id", "plotYAxis")
+                .attr("transform", "translate(" + plotPadding + ",0)")
+                .call(plotYAxis);
+        };
+
+        var updatePlotAxes = function() {
+            plotScales();
+
+            plotSvg.select("#plotXAxis")
+                .transition()
+                .duration(500)
+                .call(plotXAxis);
+
+            plotSvg.select("#plotYAxis")
+                .transition()
+                .duration(500)
+                .call(plotYAxis);
+        };
 
         // Initialize update variables
         var updateCounties;
