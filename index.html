@@ -497,6 +497,7 @@
 	            .on("change", function() {
 	                date = d3.select("#dateselect").node().value;
 	                updateCounties();
+                    updatePlot();
 	            })
 
 	        d3.select("#showstates")
