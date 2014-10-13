@@ -160,8 +160,9 @@
             plotCircles(data);
         };
 
-        var updatePlot = function() {
+        var updatePlot = function(data) {
             updatePlotAxes();
+            updatePlotCircles(data);
         };
 
         var plotScales = function() {
@@ -238,7 +239,18 @@
                 });
         };
 
-
+        var updatePlotCircles = function(data) {
+            plotSvg.selectAll("circle")
+                .data(data)
+                .transition()
+                .duration(500)
+                .attr("cx", function(d) {
+                    return plotXScale(mapper.get({'variable':plotXVariable, 'date':date}).get(d.id));
+                    })
+                .attr("cy", function(d) {
+                    return plotYScale(mapper.get({'variable':value, 'date':date}).get(d.id));
+                });
+        };
 
         // Initialize update variables
         var updateCounties;
@@ -397,7 +409,7 @@
             		.spanId('menu')
             		.menu();
 
-           	listeners();
+           	listeners(data);
 
             updateScale();
             makeLegend();
@@ -502,13 +514,13 @@
             
         }
 
-        var listeners = function() {
+        var listeners = function(data) {
 	       	d3.select("#valueselect")
 	            .on("change", function() {
 	                value = d3.select("#valueselect").node().value;
 	                updateCounties();
                     updateVariableTxt(value, mapper.variables());
-                    updatePlot();
+                    updatePlot(data);
 	            })
 
 
@@ -522,7 +534,7 @@
 	            .on("change", function() {
 	                date = d3.select("#dateselect").node().value;
 	                updateCounties();
-                    updatePlot();
+                    updatePlot(data);
 	            })
 
 	        d3.select("#showstates")
