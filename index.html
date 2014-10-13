@@ -154,9 +154,10 @@
                     .attr("width", plotWidth)
                     .attr("height", plotHeight);
 
-        var makePlot = function() {
+        var makePlot = function(data) {
             plotScales();
             plotAxes();
+            plotCircles(data);
         };
 
         var updatePlot = function() {
@@ -214,6 +215,30 @@
                 .duration(500)
                 .call(plotYAxis);
         };
+
+        var plotCircles = function(data) {
+            plotSvg.selectAll("circle")
+                .data(data)
+                .enter()
+                .append("circle")
+                .attr("cx", function(d) {
+                    return plotXScale(mapper.get({'variable':plotXVariable, 'date':date}).get(d.id));
+                })
+                .attr("cy", function(d) {
+                    return plotYScale(mapper.get({'variable':value, 'date':date}).get(d.id));
+                })
+                .attr("r", 3)
+                .attr("fill", "rgba(0,0,0,0.5)")
+                .on("click", function(d) {
+                    console.log(d);
+                })
+                .append("title")
+                .text(function(d){
+                    return mapper.get({'variable':'CBSAname', 'date':date}).get(d.id);
+                });
+        };
+
+
 
         // Initialize update variables
         var updateCounties;
@@ -435,7 +460,7 @@
 
             
             // Make the plot
-            makePlot();
+            makePlot(data);
 
             ////////////////////
             // UPDATE METHODS //
