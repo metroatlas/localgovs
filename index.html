@@ -70,8 +70,10 @@
     <!--Scripts-->
 
         <script type="text/javascript">
-            
-        var counties;
+        
+        // THE MAP
+
+        var mapCounties;
 
         var id;
         var width = 960,
@@ -128,10 +130,21 @@
         var path = d3.geo.path()
             .projection(projection);
 
-        var svg = d3.select("#map").append("svg")
+        // SVG map
+        var svgMap = d3.select("#map").append("svg")
             .attr("width", width)
             .attr("height", height);
 
+        // SVG plot
+        var hPlot = 500;
+        var wPlot = 470;
+
+        var svgPlot = d3.select("plot")
+                    .append("svg")
+                    .attr("width", wPlot)
+                    .attr("height", hPlot);
+
+        // Initialize update variables
         var updateCounties;
         var updateStates;
         
@@ -160,7 +173,7 @@
             
             
             // Draw the range (color blocks)
-            var legend = svg.append("g")
+            var legend = svgMap.append("g")
             	.attr("id", "legend")
             	.selectAll(".legend")
                 .data(r)
@@ -176,7 +189,7 @@
                 });
 
             // Draw the domain text (boundaries)
-            leglabels = svg.select("#legend")
+            leglabels = svgMap.select("#legend")
             				.selectAll(".leglabel")
             				.data(v)
             				.enter().append("text")
@@ -226,7 +239,6 @@
             } else {
                 $('#variabletxt').empty();
             }
-
         };
 
 
@@ -298,7 +310,7 @@
             thedata = data;
             topo = us;
 
-            counties = svg.append("g")
+            counties = svgMap.append("g")
                     .attr("class", "counties");
 
             counties.selectAll("path")
@@ -343,7 +355,7 @@
                 ;
 
             // Draw states borders
-            var states = svg.append("path")
+            var states = svgMap.append("path")
                             .datum(topojson.mesh(us, us.objects.states, function(a, b) { return a !== b; }))
                             .attr("class", "states")
                             .attr("id", "states")
@@ -385,7 +397,7 @@
             updateStates = function() {
                 var w = 0;
                 if(showstates == "yes") {w = 2;}
-                svg.select("#states")
+                svgMap.select("#states")
                     .transition()
                     .duration(500)
                     .style("stroke-width", w);
