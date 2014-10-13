@@ -154,6 +154,15 @@
                     .attr("width", plotWidth)
                     .attr("height", plotHeight);
 
+        var makePlot = function() {
+            plotScales();
+            plotAxes();
+        };
+
+        var updatePlot = function() {
+            updatePlotAxes();
+        };
+
         var plotScales = function() {
             // Update plot scales domains and range
 
@@ -425,6 +434,8 @@
                             .style("stroke-width", "0");
 
             
+            // Make the plot
+            makePlot();
 
             ////////////////////
             // UPDATE METHODS //
@@ -472,6 +483,7 @@
 	                value = d3.select("#valueselect").node().value;
 	                updateCounties();
                     updateVariableTxt(value, mapper.variables());
+                    updatePlot();
 	            })
 
 
