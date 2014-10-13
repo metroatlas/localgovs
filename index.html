@@ -141,21 +141,38 @@
 
         var plotPadding = 30;
 
-        var plotXScale = d3.scale.log()
-        var plotYScale = d3.scale.linear()
+        var plotXScale = d3.scale.log();
+        var plotYScale = d3.scale.linear();
 
-        var plotXAxis = d3.svg.axis()
-        var plotYAxis = d3.svg.axis()
+        var plotXAxis = d3.svg.axis();
+        var plotYAxis = d3.svg.axis();
+
+        var plotXVariable = "CBSApop";
 
         var plotSvg = d3.select("plot")
                     .append("svg")
                     .attr("width", plotWidth)
                     .attr("height", plotHeight);
 
+        var plotScales = function() {
+            // Update plot scales domains and range
+
+            plotXScale.domain([
+                d3.min(d3.values(mapper.get({'variable':plotXVariable, 'date':date}))),
+                d3.max(d3.values(mapper.get({'variable':plotXVariable, 'date':date})))
+            ])
+            .range([plotPadding, plotWidth - plotPadding]);
+
+            plotYScale.domain([
+                d3.min(d3.values(mapper.get({'variable':value, 'date':date}))),
+                d3.max(d3.values(mapper.get({'variable':value, 'date':date})))
+            ])
+            .range([plotPadding, plotHeight - plotPadding]);
+        }
+
         // Initialize update variables
         var updateCounties;
         var updateStates;
-        
 
         var legend;
         var leglabels;
