@@ -136,13 +136,21 @@
             .attr("height", height);
 
         // SVG plot
-        var hPlot = 500;
-        var wPlot = 470;
+        var plotHeight = 500;
+        var plotWidth = 470;
 
-        var svgPlot = d3.select("plot")
+        var plotPadding = 30;
+
+        var plotXScale = d3.scale.log()
+        var plotYScale = d3.scale.linear()
+
+        var plotXAxis = d3.svg.axis()
+        var plotYAxis = d3.svg.axis()
+
+        var plotSvg = d3.select("plot")
                     .append("svg")
-                    .attr("width", wPlot)
-                    .attr("height", hPlot);
+                    .attr("width", plotWidth)
+                    .attr("height", plotHeight);
 
         // Initialize update variables
         var updateCounties;
