@@ -169,14 +169,14 @@
             // Update plot scales domains and range
 
             plotXScale.domain([
-                d3.min(d3.values(mapper.get({'variable':plotXVariable, 'date':date}))),
-                d3.max(d3.values(mapper.get({'variable':plotXVariable, 'date':date})))
+                Math.floor(d3.min(d3.values(mapper.get({'variable':plotXVariable, 'date':date})))),
+                Math.ceil(d3.max(d3.values(mapper.get({'variable':plotXVariable, 'date':date}))))
             ])
             .range([plotPadding, plotWidth - plotPadding]);
 
             plotYScale.domain([
-                d3.max(d3.values(mapper.get({'variable':value, 'date':date}))),
-                d3.min(d3.values(mapper.get({'variable':value, 'date':date})))
+                Math.ceil(d3.max(d3.values(mapper.get({'variable':value, 'date':date})))),
+                Math.floor(d3.min(d3.values(mapper.get({'variable':value, 'date':date}))))
             ])
             .range([plotPadding, plotHeight - plotPadding]);
         };
