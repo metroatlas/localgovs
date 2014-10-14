@@ -83,7 +83,7 @@
         var lsize = 20;
         var lpush = 530;
 
-        var value = "countypop";
+        var value = "CBSAhhi";
         var date = "2010";
 
         // Page structure
@@ -408,6 +408,10 @@
             		.json(variables)
             		.spanId('menu')
             		.menu();
+
+            // Select the CBSAhhi option by default
+            // TODO: add a select by default option in the menu class
+            $('option[value="CBSAhhi"]').prop('selected', true);
 
            	listeners(data);
 
