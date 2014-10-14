@@ -413,6 +413,9 @@
             // TODO: add a select by default option in the menu class
             $('option[value="CBSAhhi"]').prop('selected', true);
 
+            // Instantiate variable text
+            updateVariableTxt(value, mapper.variables());
+
            	listeners(data);
 
             updateScale();
