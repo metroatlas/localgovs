@@ -160,9 +160,9 @@
             plotCircles(data);
         };
 
-        var updatePlot = function(data) {
+        var updatePlot = function(data, selected) {
             updatePlotAxes();
-            updatePlotCircles(data);
+            updatePlotCircles(data, selected);
         };
 
         var plotScales = function() {
@@ -239,17 +239,50 @@
                 });
         };
 
-        var updatePlotCircles = function(data) {
+        var updatePlotCircles = function(data, selected) {
+            //console.log(selected);
             plotSvg.selectAll("circle")
                 .data(data)
                 .transition()
                 .duration(500)
                 .attr("cx", function(d) {
-                    return plotXScale(mapper.get({'variable':plotXVariable, 'date':date}).get(d.id));
+                    return plotXScale(mapper.get({'variable':plotXVariable, 'date':date}).get(parseInt(d.id)));
                     })
                 .attr("cy", function(d) {
-                    return plotYScale(mapper.get({'variable':value, 'date':date}).get(d.id));
-                });
+                    return plotYScale(mapper.get({'variable':value, 'date':date}).get(parseInt(d.id)));
+                })
+                .style("fill", function(d) {
+                    var v = mapper.get({'variable':plotXVariable, 'date':date}).get(parseInt(d.id));
+                    if(selected != null) {
+                        if(selected.indexOf(parseInt(d.id)) !== -1) {
+                        // Color for when a county is selected
+                        return selectColor;
+                        } else {
+                            if(!isNaN(v)) {return "rgba(49,130,189,0.2)";}
+                            else {return "rgba(0,0,0,0)";}
+                        }
+                    } else {
+                        if(!isNaN(v)) {return "rgba(49,130,189,0.2)";}
+                        else {return "rgba(0,0,0,0)";}
+                    };
+                })
+                .attr("r", function(d) {
+                    var v = mapper.get({'variable':plotXVariable, 'date':date}).get(parseInt(d.id));
+                    if(selected != null) {
+                        if(selected.indexOf(parseInt(d.id)) !== -1) {
+                        return 6;
+                        } else {
+                            if(!isNaN(v)) {return 3;}
+                            else {return 0;}
+                        }
+                    } else {
+                        if(!isNaN(v)) {return 3;}
+                        else {return 0;}
+                    };
+                })
+                ;
+
+
         };
 
         // Initialize update variables
@@ -440,15 +473,15 @@
 
                 // Metro area highlighted on mouseover
                 .on("mouseover", function() {
-                	console.log("Mouse over");
                 	var cbsa = mapper.get({'variable':'CBSAcode', 'date':date}).get(d3.select(this).attr("id"))
                 	if(!isNaN(cbsa)){
                 		var co = [];
                 		mapper.get({'variable':'CBSAcode', 'date':date}).forEach(function(k, v) {
                 			if(v == cbsa){co[co.length] = parseInt(k)};
                 		});
-                		console.log(co);
+                		//console.log(co);
                         updateCounties(co);
+                        updatePlot(data, co);
                         updateInfoMetro(d3.select(this).attr("id"), mapper, divInfoMetro);
                 	} else {
                         updateInfoMetro(d3.select(this).attr("id"), mapper, divInfoMetro);
