@@ -139,7 +139,8 @@
         var plotHeight = 300;
         var plotWidth = 470;
 
-        var plotPadding = 30;
+        var plotPadding = 30,
+            plotPaddingLeft = 50;
 
         var plotXScale = d3.scale.log();
         var plotYScale = d3.scale.linear();
@@ -172,7 +173,7 @@
                 Math.floor(d3.min(d3.values(mapper.get({'variable':plotXVariable, 'date':date})))),
                 Math.ceil(d3.max(d3.values(mapper.get({'variable':plotXVariable, 'date':date}))))
             ])
-            .range([plotPadding, plotWidth - plotPadding]);
+            .range([plotPaddingLeft, plotWidth - plotPadding]);
 
             plotYScale.domain([
                 Math.ceil(d3.max(d3.values(mapper.get({'variable':value, 'date':date})))),
@@ -186,21 +187,39 @@
                 .orient("bottom")
                 .ticks(4, d3.format(",.0f"));
 
+            // Draw X Axis
             plotSvg.append("g")
                 .attr("class", "axis")
                 .attr("id", "plotXAxis")
                 .attr("transform", "translate(0," + (plotHeight - plotPadding) + ")")
                 .call(plotXAxis);
 
+            // X Axis title
+            d3.select("#plotXAxis")
+                .append("text")
+                    .attr("id", "plotXAxisText")
+                    .text(mapper.variables()[plotXVariable].description)
+                    .attr("x", (plotWidth / 2) - plotPadding)
+                    .attr("y", plotPadding);
             
             plotYAxis.scale(plotYScale)
                 .orient("left");
 
+            // Draw Y Axis
             plotSvg.append("g")
                 .attr("class", "axis")
                 .attr("id", "plotYAxis")
-                .attr("transform", "translate(" + plotPadding + ",0)")
+                .attr("transform", "translate(" + plotPaddingLeft + ",0)")
                 .call(plotYAxis);
+
+            // Y Axis title
+            d3.select("#plotYAxis")
+                .append("text")
+                    .attr("id", "plotYAxisText")
+                    .text(mapper.variables()[value].description)
+                    .attr("transform", "translate(-40, 280) rotate(-90)")
+                    ;
+
         };
 
         var updatePlotAxes = function() {
