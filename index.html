@@ -184,7 +184,7 @@
         var plotAxes = function() {
             plotXAxis.scale(plotXScale)
                 .orient("bottom")
-                .ticks(5, d3.format(",.0f"));
+                .ticks(4, d3.format(",.0f"));
 
             plotSvg.append("g")
                 .attr("class", "axis")

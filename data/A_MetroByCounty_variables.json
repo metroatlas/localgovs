@@ -113,6 +113,12 @@
             "type": "float",
             "description": "Ziegler-Brunn Index",
             "txt": ""
+        },
+        {
+            "name": "CBSApop",
+            "type": "int",
+            "description": "",
+            "txt": ""
         }
     ]
 }
