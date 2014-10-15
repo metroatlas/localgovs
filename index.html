@@ -230,10 +230,23 @@
                 .duration(500)
                 .call(plotXAxis);
 
+            /*
+            // Reserved for Y Axis variable dynamic change
+            d3.select("#plotXAxisText")
+                .text(mapper.variables()[plotXVariable].description)
+                .transition()
+                .duration(500)
+            */
+
             plotSvg.select("#plotYAxis")
                 .transition()
                 .duration(500)
                 .call(plotYAxis);
+
+            d3.select("#plotYAxisText")
+                .text(mapper.variables()[value].description)
+                .transition()
+                .duration(500)
         };
 
         var plotCircles = function(data) {
