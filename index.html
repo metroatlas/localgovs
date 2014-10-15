@@ -230,17 +230,36 @@
                 })
                 .attr("r", 3)
                 .attr("fill", "rgba(49,130,189,0.2)")
-                .on("click", function(d) {
-                    console.log(d);
+                .attr("id", function(d) {return d.id;})
+
+                // Metro area highlighted on mouseover
+                .on("mouseover", function() {
+                    var id = parseInt(d3.select(this).attr("id"));
+                    var cbsa = mapper.get({'variable':'CBSAcode', 'date':date}).get(id);
+                    if(!isNaN(cbsa)){
+                        var co = [];
+                        mapper.get({'variable':'CBSAcode', 'date':date}).forEach(function(k, v) {
+                            if(v == cbsa){co[co.length] = parseInt(k)};
+                        });
+                        updateCounties(co);
+                        updatePlot(data, co);
+                        updateInfoMetro(id, mapper, divInfoMetro);
+                    } else {
+                        updateInfoMetro(id, mapper, divInfoMetro);
+                    };
+
                 })
+
+                // Title of the metro area
                 .append("title")
                 .text(function(d){
                     return mapper.get({'variable':'CBSAname', 'date':date}).get(d.id);
-                });
+                })
+
+                ;
         };
 
         var updatePlotCircles = function(data, selected) {
-            //console.log(selected);
             plotSvg.selectAll("circle")
                 .data(data)
                 .transition()
