@@ -117,8 +117,8 @@
                 scale = d3.scale.quantize()
                         .range(rangeColors)
                         .domain([
-                            d3.min(d3.values(mapper.get({'variable':value, 'date':date}))),
-                            d3.max(d3.values(mapper.get({'variable':value, 'date':date})))
+                            Math.floor(d3.min(d3.values(mapper.get({'variable':value, 'date':date})))),
+                            Math.ceil(d3.max(d3.values(mapper.get({'variable':value, 'date':date}))))
                         ]);
             }
         }
