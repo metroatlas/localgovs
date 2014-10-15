@@ -117,7 +117,7 @@
         {
             "name": "CBSApop",
             "type": "int",
-            "description": "",
+            "description": "CBSA Population",
             "txt": ""
         }
     ]
