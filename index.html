@@ -70,8 +70,10 @@
     <!--Scripts-->
 
         <script type="text/javascript">
-            
-        var counties;
+        
+        // THE MAP
+
+        var mapCounties;
 
         var id;
         var width = 960,
@@ -81,7 +83,7 @@
         var lsize = 20;
         var lpush = 530;
 
-        var value = "countypop";
+        var value = "CBSAhhi";
         var date = "2010";
 
         // Page structure
@@ -115,8 +117,8 @@
                 scale = d3.scale.quantize()
                         .range(rangeColors)
                         .domain([
-                            d3.min(d3.values(mapper.get({'variable':value, 'date':date}))),
-                            d3.max(d3.values(mapper.get({'variable':value, 'date':date})))
+                            Math.floor(d3.min(d3.values(mapper.get({'variable':value, 'date':date})))),
+                            Math.ceil(d3.max(d3.values(mapper.get({'variable':value, 'date':date}))))
                         ]);
             }
         }
@@ -128,13 +130,215 @@
         var path = d3.geo.path()
             .projection(projection);
 
-        var svg = d3.select("#map").append("svg")
+        // SVG map
+        var svgMap = d3.select("#map").append("svg")
             .attr("width", width)
             .attr("height", height);
 
+        // SVG plot
+        var plotHeight = 300;
+        var plotWidth = 470;
+
+        var plotPadding = 30,
+            plotPaddingLeft = 50;
+
+        var plotXScale = d3.scale.log();
+        var plotYScale = d3.scale.linear();
+
+        var plotXAxis = d3.svg.axis();
+        var plotYAxis = d3.svg.axis();
+
+        var plotXVariable = "CBSApop";
+
+        var plotSvg = d3.select("#plot")
+                    .append("svg")
+                    .attr("width", plotWidth)
+                    .attr("height", plotHeight);
+
+        var makePlot = function(data) {
+            plotScales();
+            plotAxes();
+            plotCircles(data);
+        };
+
+        var updatePlot = function(data, selected) {
+            updatePlotAxes();
+            updatePlotCircles(data, selected);
+        };
+
+        var plotScales = function() {
+            // Update plot scales domains and range
+
+            plotXScale.domain([
+                Math.floor(d3.min(d3.values(mapper.get({'variable':plotXVariable, 'date':date})))),
+                Math.ceil(d3.max(d3.values(mapper.get({'variable':plotXVariable, 'date':date}))))
+            ])
+            .range([plotPaddingLeft, plotWidth - plotPadding]);
+
+            plotYScale.domain([
+                Math.ceil(d3.max(d3.values(mapper.get({'variable':value, 'date':date})))),
+                Math.floor(d3.min(d3.values(mapper.get({'variable':value, 'date':date}))))
+            ])
+            .range([plotPadding, plotHeight - plotPadding]);
+        };
+
+        var plotAxes = function() {
+            plotXAxis.scale(plotXScale)
+                .orient("bottom")
+                .ticks(4, d3.format(",.0f"));
+
+            // Draw X Axis
+            plotSvg.append("g")
+                .attr("class", "axis")
+                .attr("id", "plotXAxis")
+                .attr("transform", "translate(0," + (plotHeight - plotPadding) + ")")
+                .call(plotXAxis);
+
+            // X Axis title
+            d3.select("#plotXAxis")
+                .append("text")
+                    .attr("id", "plotXAxisText")
+                    .text(mapper.variables()[plotXVariable].description)
+                    .attr("x", (plotWidth / 2) - plotPadding)
+                    .attr("y", plotPadding);
+            
+            plotYAxis.scale(plotYScale)
+                .orient("left");
+
+            // Draw Y Axis
+            plotSvg.append("g")
+                .attr("class", "axis")
+                .attr("id", "plotYAxis")
+                .attr("transform", "translate(" + plotPaddingLeft + ",0)")
+                .call(plotYAxis);
+
+            // Y Axis title
+            d3.select("#plotYAxis")
+                .append("text")
+                    .attr("id", "plotYAxisText")
+                    .text(mapper.variables()[value].description)
+                    .attr("transform", "translate(-40, 280) rotate(-90)")
+                    ;
+
+        };
+
+        var updatePlotAxes = function() {
+            plotScales();
+
+            plotSvg.select("#plotXAxis")
+                .transition()
+                .duration(500)
+                .call(plotXAxis);
+
+            /*
+            // Reserved for Y Axis variable dynamic change
+            d3.select("#plotXAxisText")
+                .text(mapper.variables()[plotXVariable].description)
+                .transition()
+                .duration(500)
+            */
+
+            plotSvg.select("#plotYAxis")
+                .transition()
+                .duration(500)
+                .call(plotYAxis);
+
+            d3.select("#plotYAxisText")
+                .text(mapper.variables()[value].description)
+                .transition()
+                .duration(500)
+        };
+
+        var plotCircles = function(data) {
+            plotSvg.selectAll("circle")
+                .data(data)
+                .enter()
+                .append("circle")
+                .attr("cx", function(d) {
+                    return plotXScale(mapper.get({'variable':plotXVariable, 'date':date}).get(d.id));
+                })
+                .attr("cy", function(d) {
+                    return plotYScale(mapper.get({'variable':value, 'date':date}).get(d.id));
+                })
+                .attr("r", 3)
+                .attr("fill", "rgba(49,130,189,0.2)")
+                .attr("id", function(d) {return d.id;})
+
+                // Metro area highlighted on mouseover
+                .on("mouseover", function() {
+                    var id = parseInt(d3.select(this).attr("id"));
+                    var cbsa = mapper.get({'variable':'CBSAcode', 'date':date}).get(id);
+                    if(!isNaN(cbsa)){
+                        var co = [];
+                        mapper.get({'variable':'CBSAcode', 'date':date}).forEach(function(k, v) {
+                            if(v == cbsa){co[co.length] = parseInt(k)};
+                        });
+                        updateCounties(co);
+                        updatePlot(data, co);
+                        updateInfoMetro(id, mapper, divInfoMetro);
+                    } else {
+                        updateInfoMetro(id, mapper, divInfoMetro);
+                    };
+
+                })
+
+                // Title of the metro area
+                .append("title")
+                .text(function(d){
+                    return mapper.get({'variable':'CBSAname', 'date':date}).get(d.id);
+                })
+
+                ;
+        };
+
+        var updatePlotCircles = function(data, selected) {
+            plotSvg.selectAll("circle")
+                .data(data)
+                .transition()
+                .duration(500)
+                .attr("cx", function(d) {
+                    return plotXScale(mapper.get({'variable':plotXVariable, 'date':date}).get(parseInt(d.id)));
+                    })
+                .attr("cy", function(d) {
+                    return plotYScale(mapper.get({'variable':value, 'date':date}).get(parseInt(d.id)));
+                })
+                .style("fill", function(d) {
+                    var v = mapper.get({'variable':plotXVariable, 'date':date}).get(parseInt(d.id));
+                    if(selected != null) {
+                        if(selected.indexOf(parseInt(d.id)) !== -1) {
+                        // Color for when a county is selected
+                        return selectColor;
+                        } else {
+                            if(!isNaN(v)) {return "rgba(49,130,189,0.2)";}
+                            else {return "rgba(0,0,0,0)";}
+                        }
+                    } else {
+                        if(!isNaN(v)) {return "rgba(49,130,189,0.2)";}
+                        else {return "rgba(0,0,0,0)";}
+                    };
+                })
+                .attr("r", function(d) {
+                    var v = mapper.get({'variable':plotXVariable, 'date':date}).get(parseInt(d.id));
+                    if(selected != null) {
+                        if(selected.indexOf(parseInt(d.id)) !== -1) {
+                        return 6;
+                        } else {
+                            if(!isNaN(v)) {return 3;}
+                            else {return 0;}
+                        }
+                    } else {
+                        if(!isNaN(v)) {return 3;}
+                        else {return 0;}
+                    };
+                })
+                ;
+
+
+        };
+
+        // Initialize update variables
         var updateCounties;
         var updateStates;
-        
 
         var legend;
         var leglabels;
@@ -160,7 +364,7 @@
             
             
             // Draw the range (color blocks)
-            var legend = svg.append("g")
+            var legend = svgMap.append("g")
             	.attr("id", "legend")
             	.selectAll(".legend")
                 .data(r)
@@ -176,7 +380,7 @@
                 });
 
             // Draw the domain text (boundaries)
-            leglabels = svg.select("#legend")
+            leglabels = svgMap.select("#legend")
             				.selectAll(".leglabel")
             				.data(v)
             				.enter().append("text")
@@ -226,7 +430,6 @@
             } else {
                 $('#variabletxt').empty();
             }
-
         };
 
 
@@ -290,7 +493,14 @@
             		.spanId('menu')
             		.menu();
 
-           	listeners();
+            // Select the CBSAhhi option by default
+            // TODO: add a select by default option in the menu class
+            $('option[value="CBSAhhi"]').prop('selected', true);
+
+            // Instantiate variable text
+            updateVariableTxt(value, mapper.variables());
+
+           	listeners(data);
 
             updateScale();
             makeLegend();
@@ -298,7 +508,7 @@
             thedata = data;
             topo = us;
 
-            counties = svg.append("g")
+            counties = svgMap.append("g")
                     .attr("class", "counties");
 
             counties.selectAll("path")
@@ -314,15 +524,15 @@
 
                 // Metro area highlighted on mouseover
                 .on("mouseover", function() {
-                	console.log("Mouse over");
                 	var cbsa = mapper.get({'variable':'CBSAcode', 'date':date}).get(d3.select(this).attr("id"))
                 	if(!isNaN(cbsa)){
                 		var co = [];
                 		mapper.get({'variable':'CBSAcode', 'date':date}).forEach(function(k, v) {
                 			if(v == cbsa){co[co.length] = parseInt(k)};
                 		});
-                		console.log(co);
+                		//console.log(co);
                         updateCounties(co);
+                        updatePlot(data, co);
                         updateInfoMetro(d3.select(this).attr("id"), mapper, divInfoMetro);
                 	} else {
                         updateInfoMetro(d3.select(this).attr("id"), mapper, divInfoMetro);
@@ -343,7 +553,7 @@
                 ;
 
             // Draw states borders
-            var states = svg.append("path")
+            var states = svgMap.append("path")
                             .datum(topojson.mesh(us, us.objects.states, function(a, b) { return a !== b; }))
                             .attr("class", "states")
                             .attr("id", "states")
@@ -352,6 +562,8 @@
                             .style("stroke-width", "0");
 
             
+            // Make the plot
+            makePlot(data);
 
             ////////////////////
             // UPDATE METHODS //
@@ -385,7 +597,7 @@
             updateStates = function() {
                 var w = 0;
                 if(showstates == "yes") {w = 2;}
-                svg.select("#states")
+                svgMap.select("#states")
                     .transition()
                     .duration(500)
                     .style("stroke-width", w);
@@ -393,12 +605,13 @@
             
         }
 
-        var listeners = function() {
+        var listeners = function(data) {
 	       	d3.select("#valueselect")
 	            .on("change", function() {
 	                value = d3.select("#valueselect").node().value;
 	                updateCounties();
                     updateVariableTxt(value, mapper.variables());
+                    updatePlot(data);
 	            })
 
 
@@ -412,6 +625,7 @@
 	            .on("change", function() {
 	                date = d3.select("#dateselect").node().value;
 	                updateCounties();
+                    updatePlot(data);
 	            })
 
 	        d3.select("#showstates")

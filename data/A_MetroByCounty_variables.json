@@ -37,6 +37,18 @@
             "txt": "CBSAhhi"
         },
         {
+            "name": "CBSAmpdi",
+            "type": "float",
+            "description": "Metropolitan Power Diffusion Index",
+            "txt": "CBSAmpdi"
+        },
+        {
+            "name": "Deltampdi30y",
+            "type": "float",
+            "description": "30 years changes in Metropolitan Power Diffusion Index",
+            "txt": "CBSAmpdi"
+        },
+        {
             "name": "CBSAplcount",
             "type": "int",
             "description": "Number of Municipalities by Metro area",
@@ -100,6 +112,12 @@
             "name": "CBSAzb",
             "type": "float",
             "description": "Ziegler-Brunn Index",
+            "txt": ""
+        },
+        {
+            "name": "CBSApop",
+            "type": "int",
+            "description": "CBSA Population",
             "txt": ""
         }
     ]
