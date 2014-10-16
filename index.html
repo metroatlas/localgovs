@@ -433,38 +433,45 @@
         };
 
 
-        var updateInfoMetro = function(coId, mapper, div) {
+        var updateInfoMetro = function(coId, mapper, div, representation) {
                 // Populate the infobox for the county and metro area
-                // coId     county id (= FIPS code)
-                // mapper   d3.mapper object
-                // div      div of the metro infobox
+                // coId             county id (= FIPS code)
+                // mapper           d3.mapper object
+                // div              div of the metro infobox
+                // representation   county for county centric infobox
+                //                  metro for metro centric infobox
 
                 // Remove everything in the div
                 d3.select(div)
                     .selectAll("*").remove();
 
-                // County name
-                d3.select(div)
-                    .append("p")
-                    .append("strong")
-                    .text(mapper.get('countyname').get(coId) + ", " + mapper.get('statename').get(coId));
-
-                // County population
-                d3.select(div)
-                    .append("p")
-                    .text("County population: " + numeral(mapper.get({'variable':'countypop', 'date':date}).get(coId)).format('0,0'));
-
+                // Get metro area
                 var cbsa = mapper.get({'variable':'CBSAname', 'date':date}).get(coId);
 
                 if(typeof cbsa == "string") {
                     d3.select(div)
                         .append("p")
-                        .text("CBSA: " + cbsa);
+                        .append("strong")
+                        .text("Greater " + cbsa + " (CBSA)");
+                };
 
+                if(representation == "county") {
+                    // County name
                     d3.select(div)
                         .append("p")
-                        .text("CBSA Population: " + numeral(parseInt(mapper.get({'variable':'CBSApop', 'date':date}).get(coId))).format('0,0'));
-                };
+                        .append("strong")
+                        .text(mapper.get('countyname').get(coId) + ", " + mapper.get('statename').get(coId));
+
+                    // County population
+                    d3.select(div)
+                        .append("p")
+                        .text("County population: " + numeral(mapper.get({'variable':'countypop', 'date':date}).get(coId)).format('0,0'));
+                }
+                if(typeof cbsa == "string") {
+                    d3.select(div)
+                            .append("p")
+                            .text("CBSA Population: " + numeral(parseInt(mapper.get({'variable':'CBSApop', 'date':date}).get(coId))).format('0,0'));
+                }
             
         }
 
@@ -533,9 +540,9 @@
                 		//console.log(co);
                         updateCounties(co);
                         updatePlot(data, co);
-                        updateInfoMetro(d3.select(this).attr("id"), mapper, divInfoMetro);
+                        updateInfoMetro(d3.select(this).attr("id"), mapper, divInfoMetro, "county");
                 	} else {
-                        updateInfoMetro(d3.select(this).attr("id"), mapper, divInfoMetro);
+                        updateInfoMetro(d3.select(this).attr("id"), mapper, divInfoMetro, "county");
                     };
 
                 })
