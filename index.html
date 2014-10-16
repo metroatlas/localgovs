@@ -532,19 +532,15 @@
                 // Metro area highlighted on mouseover
                 .on("mouseover", function() {
                 	var cbsa = mapper.get({'variable':'CBSAcode', 'date':date}).get(d3.select(this).attr("id"))
+                    var co = [];
                 	if(!isNaN(cbsa)){
-                		var co = [];
                 		mapper.get({'variable':'CBSAcode', 'date':date}).forEach(function(k, v) {
                 			if(v == cbsa){co[co.length] = parseInt(k)};
                 		});
-                		//console.log(co);
-                        updateCounties(co);
-                        updatePlot(data, co);
-                        updateInfoMetro(d3.select(this).attr("id"), mapper, divInfoMetro, "county");
-                	} else {
-                        updateInfoMetro(d3.select(this).attr("id"), mapper, divInfoMetro, "county");
-                    };
-
+                    }
+                    updateCounties(co);
+                    updatePlot(data, co);
+                    updateInfoMetro(d3.select(this).attr("id"), mapper, divInfoMetro, "county");
                 })
 
                 .append("title")
