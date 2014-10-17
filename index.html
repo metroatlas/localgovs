@@ -170,14 +170,14 @@
             // Update plot scales domains and range
 
             plotXScale.domain([
-                Math.floor(d3.min(d3.values(mapper.get({'variable':plotXVariable, 'date':date})))),
-                Math.ceil(d3.max(d3.values(mapper.get({'variable':plotXVariable, 'date':date}))))
+                Math.floor(d3.min(mapper.get({'variable':plotXVariable, 'date':date}).values())),
+                Math.ceil(d3.max(mapper.get({'variable':plotXVariable, 'date':date}).values()))
             ])
             .range([plotPaddingLeft, plotWidth - plotPadding]);
 
             plotYScale.domain([
-                Math.ceil(d3.max(d3.values(mapper.get({'variable':value, 'date':date})))),
-                Math.floor(d3.min(d3.values(mapper.get({'variable':value, 'date':date}))))
+                Math.ceil(d3.min(mapper.get({'variable':value, 'date':date}).values())),
+                Math.floor(d3.min(mapper.get({'variable':value, 'date':date}).values()))
             ])
             .range([plotPadding, plotHeight - plotPadding]);
         };
@@ -533,6 +533,7 @@
                 .on("mouseover", function() {
                 	var cbsa = mapper.get({'variable':'CBSAcode', 'date':date}).get(d3.select(this).attr("id"))
                     var co = [];
+
                 	if(!isNaN(cbsa)){
                 		mapper.get({'variable':'CBSAcode', 'date':date}).forEach(function(k, v) {
                 			if(v == cbsa){co[co.length] = parseInt(k)};
