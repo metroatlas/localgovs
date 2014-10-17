@@ -176,7 +176,7 @@
             .range([plotPaddingLeft, plotWidth - plotPadding]);
 
             plotYScale.domain([
-                Math.ceil(d3.min(mapper.get({'variable':value, 'date':date}).values())),
+                Math.ceil(d3.max(mapper.get({'variable':value, 'date':date}).values())),
                 Math.floor(d3.min(mapper.get({'variable':value, 'date':date}).values()))
             ])
             .range([plotPadding, plotHeight - plotPadding]);
